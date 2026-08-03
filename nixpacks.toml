@@ -17,4 +17,5 @@ cacheDirectories = ['app/node_modules/.cache']
 paths = ['/app/app/node_modules/.bin']
 
 [start]
+# Vite reads PORT from Coolify and binds to 0.0.0.0 via app/vite.config.ts.
 cmd = 'cd app && npm run preview'

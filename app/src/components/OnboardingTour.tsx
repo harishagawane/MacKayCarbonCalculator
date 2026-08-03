@@ -1,6 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronLeft, X, HelpCircle } from 'lucide-react';
+import { ChevronRight, ChevronLeft, X, HelpCircle, RotateCcw } from 'lucide-react';
+
+const STEP_KEY = 'my2050-tour-step';
 
 interface TourStep {
   title: string;
@@ -86,10 +88,18 @@ const TOUR_STEPS: TourStep[] = [
 
 export const OnboardingTour = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(() => {
+    const saved = Number(localStorage.getItem(STEP_KEY) ?? '0');
+    return Number.isFinite(saved) && saved >= 0 && saved < TOUR_STEPS.length ? saved : 0;
+  });
   const [dismissed, setDismissed] = useState(() => {
     return localStorage.getItem('my2050-tour-dismissed') === 'true';
   });
+
+  // Persist progress so a reload resumes where the user left off.
+  useEffect(() => {
+    localStorage.setItem(STEP_KEY, String(currentStep));
+  }, [currentStep]);
 
   // Auto-open on first visit (only if info modal was already dismissed)
   useEffect(() => {
@@ -102,9 +112,17 @@ export const OnboardingTour = () => {
 
   const handleDismiss = useCallback(() => {
     localStorage.setItem('my2050-tour-dismissed', 'true');
+    localStorage.removeItem(STEP_KEY);
     setDismissed(true);
     setIsOpen(false);
     setCurrentStep(0);
+  }, []);
+
+  // Replay the tour from the beginning.
+  const handleReplay = useCallback(() => {
+    setCurrentStep(0);
+    setDismissed(false);
+    setIsOpen(true);
   }, []);
 
   const handleNext = useCallback(() => {
@@ -212,14 +230,26 @@ export const OnboardingTour = () => {
 
               {/* Actions */}
               <div className="flex items-center justify-between">
-                <button
-                  onClick={handlePrev}
-                  disabled={currentStep === 0}
-                  className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                  Back
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handlePrev}
+                    disabled={currentStep === 0}
+                    className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    Back
+                  </button>
+                  {currentStep > 0 && (
+                    <button
+                      onClick={handleReplay}
+                      className="flex items-center gap-1 text-xs text-[#1A5276] dark:text-[#5DADE2] hover:underline transition-colors"
+                      title="Restart the tour from the beginning"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      Replay
+                    </button>
+                  )}
+                </div>
 
                 <button
                   onClick={handleNext}

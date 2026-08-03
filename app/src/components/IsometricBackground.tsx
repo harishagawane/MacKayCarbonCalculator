@@ -1,4 +1,5 @@
 import { MotionConfig, motion, useReducedMotion } from 'framer-motion';
+import { getFreightCargoInfo } from '@/data/calculations';
 
 interface IsometricBackgroundProps {
   levels: number[];
@@ -15,21 +16,9 @@ export const IsometricBackground = ({ levels }: IsometricBackgroundProps) => {
   const carbonCaptureLevel = levels[7];
   const nuclearLevel = levels[9];
   const waveTidalLevel = levels[12];
-  const bioEnergyLevel = levels[14];
-  const hydrogenLevel = levels[8];
-  const industryLevel = levels[6];
 
-  // The inbound freight train's cargo changes with the other policy levers.
-  const freightCargo =
-    bioEnergyLevel >= 2
-      ? 'biomass'
-      : hydrogenLevel >= 3
-        ? 'hydrogen'
-        : forestryLevel >= 3
-          ? 'timber'
-          : industryLevel >= 2 && carbonCaptureLevel <= 1
-            ? 'coal'
-            : 'containers';
+  // Shared with the Results page so the scene and the data always agree.
+  const freightCargo = getFreightCargoInfo(levels).id;
   
   const windTurbines = windLevel;
   const solarPanels = Math.ceil(solarLevel / 2);
@@ -803,6 +792,57 @@ export const IsometricBackground = ({ levels }: IsometricBackgroundProps) => {
               ))}
             </g>
           </motion.g>
+
+          {/* Rail signals — one per direction, red/green cycling */}
+          <g>
+            {[{ x: 210, y: -22, side: 1 }, { x: 470, y: -22, side: -1 }, { x: 610, y: 30, side: 1 }].map((sig, i) => (
+              <g key={`signal-${i}`} transform={`translate(${sig.x}, ${sig.y})`}>
+                {/* Mast */}
+                <rect x="-1.5" y="0" width="3" height="26" fill="#34495E" />
+                {/* Signal head */}
+                <rect x="-6" y="-12" width="12" height="14" rx="2" fill="#2C3E50" />
+                {/* Red lamp */}
+                <motion.circle
+                  cx="0" cy="-8" r="3" fill="#E74C3C"
+                  animate={{ opacity: [1, 1, 0.15, 0.15, 1] }}
+                  transition={{ duration: 6 + i * 1.5, repeat: animationRepeat, ease: 'linear', delay: i * 2 }}
+                />
+                {/* Green lamp */}
+                <motion.circle
+                  cx="0" cy="-2" r="3" fill="#27AE60"
+                  animate={{ opacity: [0.15, 0.15, 1, 1, 0.15] }}
+                  transition={{ duration: 6 + i * 1.5, repeat: animationRepeat, ease: 'linear', delay: i * 2 }}
+                />
+                {/* Small cross-arm */}
+                <line x1={sig.side * -7} y1="-12" x2={sig.side * 7} y2="-12" stroke="#2C3E50" strokeWidth="2" />
+              </g>
+            ))}
+          </g>
+
+          {/* Level crossing gate where the road meets the railway */}
+          <g transform="translate(300, -30)">
+            {/* Gate post */}
+            <rect x="-2" y="20" width="4" height="36" fill="#5D6D7E" />
+            {/* Striped barrier arm — raises when a train approaches */}
+            <motion.g
+              animate={{ rotate: [0, -85, -85, 0, 0] }}
+              transition={{ duration: 16, repeat: animationRepeat, ease: 'easeInOut', times: [0, 0.18, 0.5, 0.68, 1] }}
+              style={{ transformOrigin: '0px 20px' }}
+            >
+              <rect x="-34" y="18.5" width="34" height="3.5" rx="1" fill="#E74C3C" />
+              <rect x="-30" y="18.5" width="7" height="3.5" fill="#FDFEFE" />
+              <rect x="-19" y="18.5" width="7" height="3.5" fill="#FDFEFE" />
+              <rect x="-8" y="18.5" width="7" height="3.5" fill="#FDFEFE" />
+            </motion.g>
+            {/* Flashing red light on the post */}
+            <motion.circle
+              cx="0" cy="12" r="3.5" fill="#E74C3C"
+              animate={{ opacity: [1, 0.1, 1, 0.1, 1] }}
+              transition={{ duration: 1.6, repeat: animationRepeat, ease: 'easeInOut' }}
+            />
+            {/* Post shadow */}
+            <ellipse cx="4" cy="57" rx="8" ry="2" fill="black" opacity="0.15" />
+          </g>
         </g>
         
         {/* Power lines with pylons */}

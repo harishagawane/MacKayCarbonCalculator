@@ -11,7 +11,8 @@ import { InfoModal } from '@/components/InfoModal';
 import { LeverModal } from '@/components/LeverModal';
 import { PresetsBar } from '@/components/PresetsBar';
 import { OnboardingTour } from '@/components/OnboardingTour';
-import { Info, Play } from 'lucide-react';
+import { useSoundFx } from '@/hooks/useSoundFx';
+import { Info, Play, Volume2, VolumeX } from 'lucide-react';
 
 interface MainPageProps {
   levels: number[];
@@ -44,6 +45,7 @@ export const MainPage = ({
   }, []);
 
   const emissions = useMemo(() => calculateEmissions(levels), [levels]);
+  const { muted, toggleMuted } = useSoundFx(levels);
 
   const handleLeverClick = useCallback((lever: Lever, index: number) => {
     setSelectedLever(lever);
@@ -108,6 +110,21 @@ export const MainPage = ({
               aria-label="Go to Results"
             >
               <Play className="ml-0.5 h-4 w-4" />
+            </motion.button>
+            <motion.button
+              onClick={toggleMuted}
+              className={`flex h-8 w-8 items-center justify-center rounded-lg shadow-sm transition-colors ${
+                muted
+                  ? 'bg-slate-200/90 text-slate-500 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600'
+                  : 'bg-emerald-500 text-white hover:bg-emerald-600'
+              }`}
+              whileHover={{ scale: 1.06 }}
+              whileTap={{ scale: 0.94 }}
+              title={muted ? 'Unmute lever sounds' : 'Mute lever sounds'}
+              aria-label={muted ? 'Unmute lever sounds' : 'Mute lever sounds'}
+              aria-pressed={!muted}
+            >
+              {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
             </motion.button>
           </div>
           <CO2Meter reductionPercentage={emissions.totalReduction} />

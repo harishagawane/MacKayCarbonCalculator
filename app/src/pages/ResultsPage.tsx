@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { EmissionsChart } from '@/components/charts/EmissionsChart';
 import { EnergyChart } from '@/components/charts/EnergyChart';
 import { TimelineChart } from '@/components/charts/TimelineChart';
-import { calculateEmissions, getEmissionsChartData, getEnergyChartData } from '@/data/calculations';
+import { calculateEmissions, getEmissionsChartData, getEnergyChartData, getFreightCargoInfo, getRailFleetInfo } from '@/data/calculations';
 import { FeasibilityWarnings } from '@/components/FeasibilityWarnings';
 import { SensitivityAnalysis } from '@/components/SensitivityAnalysis';
 import { ExportButton } from '@/components/ExportButton';
@@ -35,6 +35,8 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
   const emissions = useMemo(() => calculateEmissions(levels), [levels]);
   const emissionsChartData = useMemo(() => getEmissionsChartData(levels), [levels]);
   const energyChartData = useMemo(() => getEnergyChartData(levels), [levels]);
+  const freightCargo = useMemo(() => getFreightCargoInfo(levels), [levels]);
+  const railFleet = useMemo(() => getRailFleetInfo(levels), [levels]);
 
   const hasComparison = !!comparisonLevels;
 
@@ -184,6 +186,64 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
 
           <motion.div className="mt-4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
             <FeasibilityWarnings levels={levels} totalReduction={emissions.totalReduction} />
+          </motion.div>
+
+          {/* Freight & Rail breakdown */}
+          <motion.div
+            className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45 }}
+          >
+            {/* Cargo card */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm flex items-start gap-4">
+              <motion.div
+                className="text-4xl"
+                initial={{ scale: 0, rotate: -12 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 0.5 }}
+              >
+                {freightCargo.emoji}
+              </motion.div>
+              <div className="min-w-0">
+                <div className="text-xs font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">Freight on the railway</div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{freightCargo.label}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{freightCargo.detail}</p>
+                <div className="flex flex-wrap gap-1.5 mt-3">
+                  {freightCargo.conditions.map((c) => (
+                    <span
+                      key={c}
+                      className="text-[11px] px-2 py-0.5 rounded-full font-medium"
+                      style={{ backgroundColor: `${freightCargo.color}22`, color: freightCargo.color }}
+                    >
+                      {c}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Rail fleet card */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm flex items-start gap-4">
+              <motion.div
+                className="text-4xl"
+                initial={{ scale: 0, rotate: 12 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 0.55 }}
+              >
+                {railFleet.emoji}
+              </motion.div>
+              <div className="min-w-0">
+                <div className="text-xs font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">Rail fleet</div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{railFleet.engine}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{railFleet.detail}</p>
+                <div className="mt-3">
+                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-medium">
+                    Heavy Vehicles · Level {railFleet.level}
+                  </span>
+                </div>
+              </div>
+            </div>
           </motion.div>
         </section>
 

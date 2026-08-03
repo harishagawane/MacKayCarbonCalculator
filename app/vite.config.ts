@@ -22,8 +22,10 @@ export default defineConfig({
     port: previewPort,
     strictPort: true,
     // Vite blocks requests whose Host header isn't localhost/IP unless whitelisted.
-    // Coolify routes agawane.com (and www) into the container, so allow them here.
-    allowedHosts: ['agawane.com', 'www.agawane.com', '.agawane.com'],
+    // Coolify's reverse proxy (and any CDN in front of it) may forward Host headers
+    // that aren't exactly the domain list, so relax the check entirely in preview:
+    // this is a static site behind a proxy, not a public dev server.
+    allowedHosts: true,
   },
   resolve: {
     alias: {

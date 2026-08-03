@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Freebuff workspace state (private - never publish)
+.freebuff/
+
+# Node
+node_modules/
+
+# Build output
+dist/
+
+# Local screenshots / artifacts
+screenshot.png

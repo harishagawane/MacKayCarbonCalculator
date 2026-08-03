@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://my2050-calculator.example.com/sitemap.xml

@@ -1,0 +1,212 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 207 90% 54%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 207 90% 54%;
+    --radius: 0.5rem;
+    /* Chart theme tokens (light) */
+    --chart-grid: #E0E0E0;
+    --chart-text: #757575;
+    --lever-accent: #1A5276;
+    --lever-accent-soft: #EBF5FB;
+  }
+}
+
+.dark {
+  color-scheme: dark;
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
+  --card: 222 47% 13%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222 47% 13%;
+  --popover-foreground: 210 40% 98%;
+  --secondary: 217 33% 18%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217 33% 18%;
+  --muted-foreground: 215 20% 65%;
+  --accent: 217 33% 18%;
+  --accent-foreground: 210 40% 98%;
+  --border: 217 33% 24%;
+  --input: 217 33% 24%;
+  /* Chart theme tokens (dark) */
+  --chart-grid: #374151;
+  --chart-text: #9CA3AF;
+  --lever-accent: #5DADE2;
+  --lever-accent-soft: rgba(30, 58, 138, 0.4);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    min-width: 320px;
+    transition: background-color 500ms ease, color 300ms ease;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Dark scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Selection */
+::selection {
+  background: rgba(21, 101, 192, 0.2);
+}
+
+/* Focus */
+:focus-visible {
+  outline: 2px solid #1565C0;
+  outline-offset: 2px;
+}
+
+/* Dark scrollbar color */
+.dark .scene-controls-scroll {
+  scrollbar-color: #475569 #0f172a;
+}
+
+/* Reduced motion - respects user preference while keeping essential interactions */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Framer Motion writes opacity inline; keep scene objects visible rather than
+     letting a one-shot fade animation leave vehicles/smoke permanently hidden. */
+  [data-scene-motion] *,
+  [data-scene-motion] *::before,
+  [data-scene-motion] *::after {
+    animation: none !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+
+  [data-scene-motion] [style*="opacity"] {
+    opacity: 1 !important;
+  }
+}
+
+/* Mobile responsive improvements */
+@media (max-width: 768px) {
+  .h-screen {
+    height: 100dvh;
+  }
+
+  .scene-controls-scroll {
+    scrollbar-width: thin;
+  }
+}
+
+/* Print stylesheet */
+@media print {
+  @page {
+    margin: 1cm;
+    size: A4;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .dark body,
+  .dark .bg-gray-900,
+  .dark .bg-gray-800,
+  .dark .bg-gray-100 {
+    background: white !important;
+  }
+
+  .dark .text-gray-100,
+  .dark .text-gray-200,
+  .dark .text-gray-300,
+  .dark .text-gray-400 {
+    color: black !important;
+  }
+
+  /* Hide non-essential elements when printing */
+  button:not(.keep-on-print),
+  .fixed,
+  nav,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Remove shadows for print */
+  .shadow-sm,
+  .shadow-lg,
+  .shadow-md,
+  .shadow-xl {
+    box-shadow: none !important;
+  }
+
+  /* Ensure charts are visible */
+  .recharts-wrapper {
+    max-width: 100% !important;
+  }
+
+  /* Show link URLs */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+}

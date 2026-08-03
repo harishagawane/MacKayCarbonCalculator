@@ -47,6 +47,24 @@ const TOUR_STEPS: TourStep[] = [
     position: 'top',
   },
   {
+    title: 'A Living Scene',
+    description: 'The background responds to your choices: wind turbines spin faster as Wind rises, solar panels appear from Solar level 2, tidal turbines at Wave & Tidal 2, and the forest thickens with Forestry.',
+    target: 'scene',
+    position: 'top',
+  },
+  {
+    title: 'Watch the Railway',
+    description: 'The railway now carries trains in both directions. Raise Heavy Vehicles to electrify passenger trains and speed up freight — and watch the freight cargo switch between biomass, hydrogen tankers, timber, or coal depending on your other levers.',
+    target: 'scene',
+    position: 'top',
+  },
+  {
+    title: 'Cars & Trucks',
+    description: 'Raise Light Vehicles to swap petrol cars for electric ones. Raise Heavy Vehicles to add counter-flowing trucks on the road — at level 4 the whole heavy fleet turns electric or hydrogen.',
+    target: 'scene',
+    position: 'top',
+  },
+  {
     title: 'Watch the CO₂ Meter',
     description: 'The CO₂e meter on the right shows your progress. Aim for -100% to reach Net Zero by 2050!',
     target: 'CO₂e',
@@ -108,6 +126,7 @@ export const OnboardingTour = () => {
     return (
       <motion.button
         onClick={() => {
+          setDismissed(false);
           setCurrentStep(0);
           setIsOpen(true);
         }}

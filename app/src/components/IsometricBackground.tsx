@@ -15,10 +15,107 @@ export const IsometricBackground = ({ levels }: IsometricBackgroundProps) => {
   const carbonCaptureLevel = levels[7];
   const nuclearLevel = levels[9];
   const waveTidalLevel = levels[12];
+  const bioEnergyLevel = levels[14];
+  const hydrogenLevel = levels[8];
+  const industryLevel = levels[6];
+
+  // The inbound freight train's cargo changes with the other policy levers.
+  const freightCargo =
+    bioEnergyLevel >= 2
+      ? 'biomass'
+      : hydrogenLevel >= 3
+        ? 'hydrogen'
+        : forestryLevel >= 3
+          ? 'timber'
+          : industryLevel >= 2 && carbonCaptureLevel <= 1
+            ? 'coal'
+            : 'containers';
   
   const windTurbines = windLevel;
   const solarPanels = Math.ceil(solarLevel / 2);
   const trees = forestryLevel * 4;
+
+  // Shared animated wheel (spokes + hub) for the freight fleet and trucks.
+  const spokedWheel = (cx: number, cy: number, r: number, dur: number) => (
+    <motion.g
+      animate={{ rotate: 360 }}
+      transition={{ duration: dur, repeat: animationRepeat, ease: 'linear' }}
+      style={{ transformOrigin: `${cx}px ${cy}px` }}
+    >
+      <circle cx={cx} cy={cy} r={r} fill="#17202A" />
+      <line x1={cx - r + 1.5} y1={cy} x2={cx + r - 1.5} y2={cy} stroke="#85929E" strokeWidth="0.8" />
+      <line x1={cx} y1={cy - r + 1.5} x2={cx} y2={cy + r - 1.5} stroke="#85929E" strokeWidth="0.8" />
+      <circle cx={cx} cy={cy} r={Math.max(1, r * 0.3)} fill="#E5E7E9" />
+    </motion.g>
+  );
+
+  // Cargo stacked on freight wagons — picked from the other policy levers.
+  const cargoStack = (cargo: string) => {
+    switch (cargo) {
+      case 'biomass':
+        return (
+          <g>
+            {[0, 1, 2].map(i => (
+              <ellipse key={i} cx={11 + i * 17} cy={-7} rx={8} ry={5.5} fill={i % 2 ? '#58D68D' : '#27AE60'} stroke="#1E8449" strokeWidth="0.7" />
+            ))}
+            <rect x="4" y="-3.5" width="48" height="3.5" rx="1" fill="#1E8449" />
+          </g>
+        );
+      case 'hydrogen':
+        return (
+          <g>
+            {[0, 1].map(i => (
+              <g key={i}>
+                <rect x={6 + i * 26} y={-21} width="21" height="13" rx="6.5" fill="#D5DBDB" stroke="#85929E" strokeWidth="0.8" />
+                <rect x={6 + i * 26} y={-16.5} width="6" height="4.5" rx="2" fill="#5DADE2" />
+                <text x={16.5 + i * 26} y={-10} textAnchor="middle" fontSize="6.5" fontWeight="bold" fill="#34495E">H₂</text>
+              </g>
+            ))}
+            <rect x="2" y="-4" width="52" height="4" rx="1" fill="#7F8C8D" />
+          </g>
+        );
+      case 'timber':
+        return (
+          <g>
+            {[0, 1, 2, 3].map(i => (
+              <ellipse key={i} cx={10 + i * 12} cy={-9 + (i % 2) * 4.5} rx={5.5} ry={5} fill={i % 2 ? '#A1887F' : '#8D6E63'} stroke="#6D4C41" strokeWidth="0.6" />
+            ))}
+            <rect x="2" y="-3" width="52" height="3" rx="1" fill="#5D4037" />
+          </g>
+        );
+      case 'coal':
+        return (
+          <g>
+            <path d="M4 -6 Q16 -19 30 -6 L30 -2 L4 -2 Z" fill="#4D5656" />
+            <path d="M22 -8 Q35 -19 48 -8 L48 -2 L22 -2 Z" fill="#34495E" />
+            <path d="M8 -2 Q20 -10 32 -2 L32 2 L8 2 Z" fill="#2C3E50" />
+          </g>
+        );
+      default: // containers
+        return (
+          <g>
+            <rect x="3" y="-17" width="20" height="15" rx="1" fill="#E67E22" />
+            <rect x="25" y="-14" width="16" height="12" rx="1" fill="#2E86C1" />
+            <rect x="43" y="-17" width="11" height="15" rx="1" fill="#F1C40F" />
+          </g>
+        );
+    }
+  };
+
+  // A road truck — diesel in the present day, electric/hydrogen livery at level 4.
+  const truckShape = (clean: boolean, scale = 1) => (
+    <g transform={`scale(${scale})`}>
+      {/* Container trailer */}
+      <rect x="20" y="-16" width="44" height="17" rx="1.5" fill={clean ? '#A3E4D7' : '#7D3C98'} />
+      <rect x="23" y="-20" width="38" height="5" rx="1" fill={clean ? '#58D68D' : '#A569BD'} />
+      {/* Cab */}
+      <path d="M0 -12 L20 -12 L20 4 L0 4 Z" fill={clean ? '#16A085' : '#5D6D7E'} />
+      <path d="M5 -10 L12 -10 L12 2 L5 2 Z" fill={clean ? '#D1F2EB' : '#BFC9CA'} />
+      {/* Wheels */}
+      {spokedWheel(10, 6, 4, 0.5)}
+      {spokedWheel(58, 6, 4, 0.5)}
+    </g>
+  );
 
   return (
     <MotionConfig reducedMotion={reduceMotion ? 'always' : 'never'}>
@@ -458,13 +555,48 @@ export const IsometricBackground = ({ levels }: IsometricBackgroundProps) => {
           </motion.g>
         )}
         
+        {/* Counter-direction truck traffic — heavy vehicles lever; clean electric/hydrogen at level 4 */}
+        {heavyVehiclesLevel >= 2 && (
+          <motion.g
+            initial={{ x: 800, opacity: 0 }}
+            animate={{
+              x: [800, 580, 330, 150],
+              y: [0, 1, 0, -1],
+              opacity: [0, 1, 1, 0],
+            }}
+            transition={{ duration: 24, repeat: animationRepeat, ease: 'linear', delay: 4 }}
+          >
+            <g transform="translate(680, 450)">
+              {truckShape(heavyVehiclesLevel >= 4)}
+            </g>
+          </motion.g>
+        )}
+
+        {heavyVehiclesLevel >= 3 && (
+          <motion.g
+            initial={{ x: 860, opacity: 0 }}
+            animate={{
+              x: [860, 640, 380, 170],
+              y: [0, 1, 0, -1],
+              opacity: [0, 1, 1, 0],
+            }}
+            transition={{ duration: 30, repeat: animationRepeat, ease: 'linear', delay: 14 }}
+          >
+            <g transform="translate(760, 472)">
+              {truckShape(heavyVehiclesLevel >= 4, 1.12)}
+            </g>
+          </motion.g>
+        )}
+
         {/* Train tracks - always part of the landscape */}
         <g transform="translate(80, 560)">
           <rect x="0" y="0" width="800" height="7" fill="#5D4037" />
           <rect x="0" y="18" width="800" height="7" fill="#5D4037" />
           {[0, 1, 2, 3, 4, 5, 6, 7].map(i => (
-            <rect key={i} x={i * 100} y="0" width="7" height="25" fill="#3E2723" />
+            <rect key={i} x={i * 100} y="0" width="7" height="57" fill="#3E2723" />
           ))}
+          <rect x="0" y="32" width="800" height="7" fill="#5D4037" />
+          <rect x="0" y="50" width="800" height="7" fill="#5D4037" />
 
           {/* Train - diesel freight at level 1, electric passenger rail at level 2+, faster as the lever rises */}
           {heavyVehiclesLevel <= 1 ? (
@@ -588,6 +720,81 @@ export const IsometricBackground = ({ levels }: IsometricBackgroundProps) => {
               </g>
             </motion.g>
           )}
+
+          {/* Counter-direction freight train on the inbound (foreground) track — cargo reflects the other levers */}
+          <motion.g
+            initial={{ x: 760, opacity: 0 }}
+            animate={{
+              x: [760, 560, 340, 120],
+              y: [0, 1, 0, -1],
+              opacity: [0, 1, 1, 0],
+            }}
+            transition={{ duration: 28 - heavyVehiclesLevel * 2, repeat: animationRepeat, ease: 'linear', delay: 5 }}
+          >
+            <g transform="translate(0, 26)">
+              {/* Engine — diesel at level 1, electric at 2-3, hydrogen livery at 4 */}
+              {heavyVehiclesLevel >= 4 ? (
+                <g>
+                  <rect x="0" y="0" width="58" height="22" rx="3" fill="#117A65" />
+                  <rect x="0" y="0" width="14" height="22" rx="3" fill="#0E6251" />
+                  <motion.circle cx="10" cy="11" r="3" fill="#F4D03F" animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.6, repeat: animationRepeat, ease: 'easeInOut' }} />
+                  <rect x="20" y="3" width="14" height="8" rx="1" fill="#A3E4D7" />
+                  <rect x="38" y="3" width="14" height="8" rx="1" fill="#A3E4D7" />
+                  <text x="42" y="-2" fontSize="6" fontWeight="bold" fill="#D1F2EB">H₂</text>
+                  {spokedWheel(12, 22, 5, 0.45)}
+                  {spokedWheel(46, 22, 5, 0.45)}
+                </g>
+              ) : heavyVehiclesLevel >= 2 ? (
+                <g>
+                  <rect x="0" y="0" width="58" height="22" rx="3" fill="#1B4F72" />
+                  <rect x="0" y="0" width="14" height="22" rx="3" fill="#154360" />
+                  <motion.circle cx="10" cy="11" r="3" fill="#F4D03F" animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.6, repeat: animationRepeat, ease: 'easeInOut' }} />
+                  <rect x="20" y="3" width="14" height="8" rx="1" fill="#AED6F1" />
+                  <rect x="38" y="3" width="14" height="8" rx="1" fill="#AED6F1" />
+                  <line x1="32" y1="0" x2="38" y2="-8" stroke="#85929E" strokeWidth="1.4" />
+                  <line x1="38" y1="-8" x2="44" y2="-8" stroke="#85929E" strokeWidth="1.4" />
+                  <motion.circle cx="44" cy="-8" r="2.2" fill="#F4D03F" animate={{ scale: [0, 1.3, 0], opacity: [0, 1, 0] }} transition={{ duration: 0.4, repeat: animationRepeat, repeatDelay: 1.4 }} />
+                  {spokedWheel(12, 22, 5, 0.5)}
+                  {spokedWheel(46, 22, 5, 0.5)}
+                </g>
+              ) : (
+                <g>
+                  <rect x="0" y="0" width="58" height="22" rx="3" fill="#4A5A65" />
+                  <rect x="0" y="0" width="14" height="22" rx="3" fill="#2E3B44" />
+                  <motion.circle cx="10" cy="11" r="3" fill="#F4D03F" animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.6, repeat: animationRepeat, ease: 'easeInOut' }} />
+                  <rect x="20" y="3" width="14" height="8" rx="1" fill="#85929E" />
+                  <rect x="38" y="3" width="14" height="8" rx="1" fill="#85929E" />
+                  <rect x="27" y="-7" width="5" height="7" fill="#2E3B44" />
+                  <motion.g
+                    animate={{ y: [-7, -18], opacity: [0.6, 0], scale: [1, 1.6] }}
+                    transition={{ duration: 1.4, repeat: animationRepeat, ease: 'easeOut' }}
+                  >
+                    <circle cx="29.5" cy="-7" r="2.5" fill="#BFC9CA" />
+                  </motion.g>
+                  {spokedWheel(12, 22, 5, 0.6)}
+                  {spokedWheel(46, 22, 5, 0.6)}
+                </g>
+              )}
+
+              {/* Freight wagons — cargo varies with the policy levers */}
+              {[...Array(heavyVehiclesLevel >= 3 ? 3 : 2)].map((_, wi) => (
+                <motion.g
+                  key={wi}
+                  animate={{ x: wi % 2 ? [0, -1.4, 0, 1.4, 0] : [0, 1.4, 0, -1.4, 0] }}
+                  transition={{ duration: 3 + wi * 0.2, repeat: animationRepeat, ease: 'easeInOut', delay: 0.4 + wi * 0.4 }}
+                >
+                  <g transform={`translate(${70 + wi * 64}, 0)`}>
+                    <rect x="0" y="0" width="56" height="20" rx="2" fill="#7F8C8D" />
+                    <rect x="0" y="0" width="56" height="8" rx="2" fill="#95A5A6" />
+                    <rect x="2" y="-4" width="52" height="4" rx="1" fill="#5D6D7E" />
+                    {cargoStack(freightCargo)}
+                    {spokedWheel(12, 22, 4.5, 0.58)}
+                    {spokedWheel(44, 22, 4.5, 0.58)}
+                  </g>
+                </motion.g>
+              ))}
+            </g>
+          </motion.g>
         </g>
         
         {/* Power lines with pylons */}

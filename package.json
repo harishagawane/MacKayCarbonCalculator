@@ -1,0 +1,15 @@
+{
+  "name": "mackay-carbon-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "My2050 Carbon Calculator - UK Net Zero pathway explorer (React + Vite)",
+  "scripts": {
+    "build": "cd app && npm ci && npm run build",
+    "start": "cd app && npm run preview",
+    "dev": "cd app && npm run dev",
+    "preview": "cd app && npm run preview"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

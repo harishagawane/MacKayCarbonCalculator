@@ -1,0 +1,21 @@
+# My2050 Carbon Calculator - Nixpacks build config (Coolify)
+# This file lives in app/ so the build also works when Coolify's
+# Base Directory is set to /app. Node 22 is pinned because Vite 7
+# requires Node >= 20.19.
+providers = ['node']
+
+[phases.setup]
+nixPkgs = ['nodejs_22']
+
+[phases.install]
+cmds = ['npm ci']
+cacheDirectories = ['/root/.npm']
+paths = ['/app/node_modules/.bin']
+
+[phases.build]
+cmds = ['npm run build']
+cacheDirectories = ['node_modules/.cache']
+paths = ['/app/node_modules/.bin']
+
+[start]
+cmd = 'npm run preview'

@@ -21,6 +21,9 @@ export default defineConfig({
     host: '0.0.0.0',
     port: previewPort,
     strictPort: true,
+    // Vite blocks requests whose Host header isn't localhost/IP unless whitelisted.
+    // Coolify routes agawane.com (and www) into the container, so allow them here.
+    allowedHosts: ['agawane.com', 'www.agawane.com', '.agawane.com'],
   },
   resolve: {
     alias: {

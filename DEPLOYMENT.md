@@ -13,6 +13,8 @@ This repository keeps the Vite application in `app/` and includes Nixpacks confi
 
 The preview server binds to `0.0.0.0`, not only localhost. It uses `PORT` when Coolify supplies one and otherwise defaults to `3000`. This is required so Coolify's reverse proxy and Cloudflare can reach the container.
 
+The Vite preview server also rejects unknown Host headers (DNS-rebinding protection). `app/vite.config.ts` whitelists `agawane.com` and `www.agawane.com` via `preview.allowedHosts`. If the domain ever changes, update that list.
+
 After changing deployment configuration or server scripts, force a fresh deployment rather than only restarting a cached image. Confirm the deployment log contains a listener similar to:
 
 ```text

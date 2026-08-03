@@ -119,12 +119,20 @@ export const IsometricBackground = ({ levels }: IsometricBackgroundProps) => {
 
   return (
     <MotionConfig reducedMotion={reduceMotion ? 'always' : 'never'}>
-      <div className="absolute inset-0 overflow-hidden">
+      <div
+        className="absolute inset-0 overflow-hidden transition-[filter] duration-500 dark:brightness-75 dark:saturate-75"
+        style={{
+          // Continuation of the scene's sky -> hills -> grass so letterbox bands blend in.
+          // Stops mirror the viewBox: sky to ~54% (horizon), hills, then grass.
+          background:
+            'linear-gradient(180deg, #5DADE2 0%, #85C1E9 28%, #AED6F1 54%, #82E0AA 58%, #7DCEA0 66%, #52BE80 100%)',
+        }}
+      >
         <svg
           viewBox="0 0 1200 700"
-          className="h-full w-full transition-[filter] duration-500 dark:brightness-75 dark:saturate-75"
+          className="h-full w-full"
           data-scene-motion="true"
-          preserveAspectRatio="xMidYMid slice"
+          preserveAspectRatio="xMidYMid meet"
         >
         <defs>
           {/* Sky gradient */}

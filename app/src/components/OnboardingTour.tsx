@@ -130,7 +130,7 @@ export const OnboardingTour = () => {
           setCurrentStep(0);
           setIsOpen(true);
         }}
-        className="fixed top-20 left-4 z-30 w-10 h-10 bg-white dark:bg-gray-800 rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow border border-gray-200 dark:border-gray-700"
+        className="fixed right-16 top-4 z-30 w-10 h-10 bg-white dark:bg-gray-800 rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow border border-gray-200 dark:border-gray-700"
         whileHover={{ scale: 1.12, rotate: 10 }}
         whileTap={{ scale: 0.9 }}
         title="Open guided tour"

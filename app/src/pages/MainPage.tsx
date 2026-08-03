@@ -59,12 +59,13 @@ export const MainPage = ({
 
   return (
     <motion.div
-      className="h-screen flex flex-col overflow-hidden bg-[#87CEEB] dark:bg-slate-950 transition-colors duration-500"
+      className="h-dvh flex flex-col overflow-y-auto overflow-x-hidden bg-[#87CEEB] dark:bg-slate-950 transition-colors duration-500"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex-1 relative">
+      {/* min-h keeps the animation window visible on short screens; the footer scrolls into view instead of collapsing the scene. */}
+      <div className="relative min-h-[180px] flex-1">
         <IsometricBackground levels={levels} />
         <div
           aria-hidden="true"
@@ -114,6 +115,7 @@ export const MainPage = ({
       </div>
 
       <motion.div
+        className="shrink-0"
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.35, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}

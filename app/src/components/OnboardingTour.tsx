@@ -4,6 +4,29 @@ import { ChevronRight, ChevronLeft, X, HelpCircle, RotateCcw } from 'lucide-reac
 
 const STEP_KEY = 'my2050-tour-step';
 
+// Storage can throw in Safari private mode / blocked-storage contexts.
+const safeGet = (key: string) => {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+const safeSet = (key: string, value: string) => {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    /* storage unavailable */
+  }
+};
+const safeRemove = (key: string) => {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    /* storage unavailable */
+  }
+};
+
 interface TourStep {
   title: string;
   description: string;
@@ -89,21 +112,21 @@ const TOUR_STEPS: TourStep[] = [
 export const OnboardingTour = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(() => {
-    const saved = Number(localStorage.getItem(STEP_KEY) ?? '0');
+    const saved = Number(safeGet(STEP_KEY) ?? '0');
     return Number.isFinite(saved) && saved >= 0 && saved < TOUR_STEPS.length ? saved : 0;
   });
   const [dismissed, setDismissed] = useState(() => {
-    return localStorage.getItem('my2050-tour-dismissed') === 'true';
+    return safeGet('my2050-tour-dismissed') === 'true';
   });
 
   // Persist progress so a reload resumes where the user left off.
   useEffect(() => {
-    localStorage.setItem(STEP_KEY, String(currentStep));
+    safeSet(STEP_KEY, String(currentStep));
   }, [currentStep]);
 
   // Auto-open on first visit (only if info modal was already dismissed)
   useEffect(() => {
-    const infoDismissed = localStorage.getItem('my2050-info-dismissed');
+    const infoDismissed = safeGet('my2050-info-dismissed');
     if (!dismissed && infoDismissed && !isOpen) {
       const timer = setTimeout(() => setIsOpen(true), 800);
       return () => clearTimeout(timer);
@@ -111,15 +134,17 @@ export const OnboardingTour = () => {
   }, [dismissed, isOpen]);
 
   const handleDismiss = useCallback(() => {
-    localStorage.setItem('my2050-tour-dismissed', 'true');
-    localStorage.removeItem(STEP_KEY);
+    safeSet('my2050-tour-dismissed', 'true');
+    safeRemove(STEP_KEY);
     setDismissed(true);
     setIsOpen(false);
     setCurrentStep(0);
   }, []);
 
-  // Replay the tour from the beginning.
+  // Replay the tour from the beginning (also clears the dismissed flag so a
+  // reload resumes the freshly restarted tour).
   const handleReplay = useCallback(() => {
+    safeRemove('my2050-tour-dismissed');
     setCurrentStep(0);
     setDismissed(false);
     setIsOpen(true);
@@ -144,6 +169,7 @@ export const OnboardingTour = () => {
     return (
       <motion.button
         onClick={() => {
+          safeRemove('my2050-tour-dismissed');
           setDismissed(false);
           setCurrentStep(0);
           setIsOpen(true);

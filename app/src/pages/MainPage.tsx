@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useLayoutEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { levers } from '@/data/levers';
 import { calculateEmissions } from '@/data/calculations';
@@ -36,6 +36,32 @@ export const MainPage = ({
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [isLeverModalOpen, setIsLeverModalOpen] = useState(false);
   const [isDockOpen, setIsDockOpen] = useState(true);
+  // The policy dock changes height with screen size, text wrapping and saved
+  // comparison actions. Measure the real element instead of guessing a pixel
+  // inset so the rail/road foreground stays visible on every viewport.
+  const dockRef = useRef<HTMLDivElement>(null);
+  const [dockHeight, setDockHeight] = useState(220);
+
+  useLayoutEffect(() => {
+    if (!isDockOpen || !dockRef.current) return;
+
+    const element = dockRef.current;
+    const measure = () => {
+      const next = Math.ceil(element.getBoundingClientRect().height);
+      if (next > 0) setDockHeight(previous => previous === next ? previous : next);
+    };
+
+    measure();
+    const observer = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(measure)
+      : null;
+    observer?.observe(element);
+    window.addEventListener('resize', measure);
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [isDockOpen]);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(() => {
     try {return !window.localStorage.getItem('my2050-info-dismissed');} catch {return true;}
   });
@@ -67,10 +93,18 @@ export const MainPage = ({
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Keep the landscape at full viewport height. Controls overlay it and may be collapsed. */}
+      {/* The world remains full-page, but its foreground stays above the dock.
+          The full-viewport backdrop prevents any exposed blank strip. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0"
+        style={{ background: 'linear-gradient(180deg,#6b9fc5 0%,#a8d0dc 48%,#96c49d 65%,#468b67 100%)' }} />
       <div className="absolute inset-0">
+        <div
+          className="absolute inset-x-0 top-0 overflow-hidden transition-[bottom] duration-300 ease-out"
+          style={{ bottom: isDockOpen ? `${dockHeight + 32}px` : '0px' }}
+        >
+          <IsometricBackground levels={levels} foregroundFocus={isDockOpen} />
+        </div>
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-slate-900/10 via-transparent to-slate-950/25 dark:from-slate-950/35 dark:to-slate-950/55" />
-        <IsometricBackground levels={levels} />
 
         <motion.div
           className="absolute left-3 right-32 top-3 z-20 sm:left-5 sm:right-40"
@@ -148,6 +182,7 @@ export const MainPage = ({
         {isDockOpen ? (
           <motion.div
             key="immersive-policy-dock"
+            ref={dockRef}
             className="absolute inset-x-3 bottom-3 z-30 mx-auto max-w-[1580px] overflow-hidden rounded-[22px] border border-white/25 bg-slate-900/80 text-white shadow-[0_20px_70px_rgba(5,26,40,0.45)] backdrop-blur-2xl dark:border-slate-600/50 dark:bg-slate-950/85 sm:inset-x-5 sm:bottom-5"
             initial={{ opacity: 0, y: 70 }}
             animate={{ opacity: 1, y: 0 }}

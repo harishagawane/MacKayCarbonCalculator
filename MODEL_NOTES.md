@@ -73,3 +73,18 @@ mobile horizontal scenery pan and lever scroll; all 15 slider selections;
 open a lever detail modal; apply presets; save/clear comparison; Results;
 theme, sound, and reduced motion. No full live-browser acceptance run is
 recorded in the connector environment.
+
+## Foreground visibility with the controls expanded
+
+The policy dock is measured using `ResizeObserver` whenever it is open.
+The animated scene's available lower boundary automatically reserves the
+actual dock height plus a 32px visual gap rather than relying on fixed
+breakpoints. Its SVG uses bottom-aligned `xMidYMax slice` framing with the
+dock open to keep the road and railway in view; after collapsing the dock,
+the full-viewport centred framing returns. A full-page scenic gradient
+continues behind the dock and prevents hard blank strips.
+
+Verify visually at desktop, laptop, mobile portrait, landscape and browser
+zoom with the dock open and closed. No CSS transform is applied directly to
+the animated SVG objects, so Framer Motion animations retain their intended
+coordinate space.

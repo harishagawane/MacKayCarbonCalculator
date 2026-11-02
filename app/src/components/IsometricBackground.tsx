@@ -3,9 +3,11 @@ import { getFreightCargoInfo } from '@/data/calculations';
 
 interface IsometricBackgroundProps {
   levels: number[];
+  /** Prioritise visibility of the road and railway when the controls are open. */
+  foregroundFocus?: boolean;
 }
 
-export const IsometricBackground = ({ levels }: IsometricBackgroundProps) => {
+export const IsometricBackground = ({ levels, foregroundFocus = false }: IsometricBackgroundProps) => {
   const reduceMotion = useReducedMotion();
   const animationRepeat = reduceMotion ? 0 : Infinity;
   const windLevel = levels[10];
@@ -119,7 +121,7 @@ export const IsometricBackground = ({ levels }: IsometricBackgroundProps) => {
           viewBox="0 0 1200 700"
           className="h-full w-full"
           data-scene-motion="true"
-          preserveAspectRatio="xMidYMid slice"
+          preserveAspectRatio={foregroundFocus ? 'xMidYMax slice' : 'xMidYMid slice'}
         >
         <defs>
           {/* Sky gradient */}

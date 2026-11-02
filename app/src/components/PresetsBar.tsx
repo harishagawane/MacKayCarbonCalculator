@@ -10,16 +10,16 @@ interface PresetsBarProps {
 
 export const PresetsBar = ({ presets, activePreset, onSelect, disabled }: PresetsBarProps) => {
   return (
-    <div className="flex flex-wrap gap-1.5">
+    <div className="scene-controls-scroll flex items-center gap-2 overflow-x-auto pb-1 pr-2">
       {presets.map((preset, idx) => (
         <motion.button
           key={preset.id}
           onClick={() => onSelect(preset)}
           disabled={disabled}
-          className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all border ${
+          className={`inline-flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold shadow-lg backdrop-blur-md transition-colors ${
             activePreset === preset.id
-              ? 'bg-[#1A5276] text-white border-[#1A5276] shadow-md'
-              : 'border-gray-200 bg-white text-gray-700 hover:border-[#1A5276]/30 hover:bg-[#EBF5FB] dark:border-slate-600 dark:bg-slate-800/90 dark:text-slate-200 dark:hover:border-sky-400/50 dark:hover:bg-slate-700'
+              ? 'border-emerald-300/70 bg-emerald-500/90 text-slate-950'
+              : 'border-white/40 bg-slate-900/65 text-white hover:bg-slate-800/85 dark:border-slate-500/40 dark:bg-slate-900/80 dark:text-white dark:hover:bg-slate-800'
           } disabled:opacity-50 disabled:cursor-not-allowed`}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}

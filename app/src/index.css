@@ -210,3 +210,57 @@
     color: #666;
   }
 }
+
+/* Immersive landscape: the SVG fills the viewport while the policy dock floats over it. */
+.immersive-scene svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: saturate(1.06) contrast(1.02);
+}
+.immersive-lever-range {
+  height: 5px;
+  border: none;
+  border-radius: 999px;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  touch-action: pan-x;
+}
+.immersive-lever-range::-webkit-slider-thumb {
+  width: 17px;
+  height: 17px;
+  border: 3px solid #d2fff0;
+  border-radius: 50%;
+  background: #0c705b;
+  box-shadow: 0 1px 7px rgb(0 0 0 / .3);
+  -webkit-appearance: none;
+}
+.immersive-lever-range::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 3px solid #d2fff0;
+  border-radius: 50%;
+  background: #0c705b;
+  box-shadow: 0 1px 7px rgb(0 0 0 / .3);
+}
+.immersive-lever-range:focus-visible {
+  outline: 2px solid #d2fff0;
+  outline-offset: 7px;
+}
+@media (max-width: 700px) {
+  /* Let touch users pan across the world instead of shrinking every building. */
+  .immersive-scene {
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
+  }
+  .immersive-scene svg {
+    width: max(100%, 172dvh);
+    max-width: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .immersive-scene svg { filter: none; }
+}

@@ -47,3 +47,29 @@ do not substitute for a browser/production smoke test.
 Security note: dependency issues reported by `npm audit` should be triaged
 against the lockfile with patched versions that do not disrupt the build;
 `npm audit fix --force` has not been run.
+
+## Immersive landscape and redesigned controls (November 2026)
+
+The main page now uses a **full-viewport** responsive animated landscape, with
+a dark-glass policy dock overlay. The dock can be hidden to explore the scene
+without obstruction, then reopened using the bottom button. The scene keeps
+existing live connections between the 15 policy levers and animated assets
+(traffic, freight, turbines, solar, forestry, CCS and more).
+
+Mobile layouts make the scenery horizontally pannable so its details remain
+visible rather than scaling the world to a tiny strip. The floating dock is
+horizontally scrollable by lever group, with **native range inputs** and a
+separate button to open details for each policy lever.
+
+The SVG includes weathered atmospheric gradients, depth shadows, distant
+hills, mist, and subtle lighting. Motion respects prefers-reduced-motion.
+
+The score meter represents **only** the illustrative policy index. Neither
+the visual effects nor score should be interpreted as a scientifically validated
+UK emissions forecast. Existing Results, presets and comparison workflows remain.
+
+Manual acceptance checklist: desktop full viewport with dock visible/collapsed;
+mobile horizontal scenery pan and lever scroll; all 15 slider selections;
+open a lever detail modal; apply presets; save/clear comparison; Results;
+theme, sound, and reduced motion. No full live-browser acceptance run is
+recorded in the connector environment.

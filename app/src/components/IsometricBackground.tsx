@@ -109,38 +109,38 @@ export const IsometricBackground = ({ levels }: IsometricBackgroundProps) => {
   return (
     <MotionConfig reducedMotion={reduceMotion ? 'always' : 'never'}>
       <div
-        className="absolute inset-0 overflow-hidden transition-[filter] duration-500 dark:brightness-75 dark:saturate-75"
+        className="immersive-scene absolute inset-0 overflow-hidden transition-[filter] duration-700 dark:brightness-[0.68] dark:saturate-[0.85]"
         style={{
-          // Continuation of the scene's sky -> hills -> grass so letterbox bands blend in.
-          // Stops mirror the viewBox: sky to ~54% (horizon), hills, then grass.
-          background:
-            'linear-gradient(180deg, #5DADE2 0%, #85C1E9 28%, #AED6F1 54%, #82E0AA 58%, #7DCEA0 66%, #52BE80 100%)',
+          // Keep the panoramic viewport filled at every aspect ratio.
+          background: 'linear-gradient(180deg,#6b9ec3 0%,#b6d9dd 55%,#8bbd9b 66%,#4a976a 100%)',
         }}
       >
         <svg
           viewBox="0 0 1200 700"
           className="h-full w-full"
           data-scene-motion="true"
-          preserveAspectRatio="xMidYMid meet"
+          preserveAspectRatio="xMidYMid slice"
         >
         <defs>
           {/* Sky gradient */}
           <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#5DADE2" />
-            <stop offset="50%" stopColor="#85C1E9" />
-            <stop offset="100%" stopColor="#AED6F1" />
+            <stop offset="0%" stopColor="#6B9FC5" />
+            <stop offset="52%" stopColor="#A8D0DC" />
+            <stop offset="100%" stopColor="#E7DEBF" />
           </linearGradient>
           
           {/* Grass gradient */}
           <linearGradient id="grassGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#7DCEA0" />
-            <stop offset="100%" stopColor="#52BE80" />
+            <stop offset="0%" stopColor="#82B98E" />
+            <stop offset="48%" stopColor="#65AE80" />
+            <stop offset="100%" stopColor="#3F8A68" />
           </linearGradient>
           
           {/* Water gradient */}
           <linearGradient id="waterGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#5DADE2" />
-            <stop offset="100%" stopColor="#2E86AB" />
+            <stop offset="0%" stopColor="#8ECCE0" />
+            <stop offset="45%" stopColor="#4F9DBB" />
+            <stop offset="100%" stopColor="#246F97" />
           </linearGradient>
           
           {/* Sun glow */}
@@ -149,11 +149,32 @@ export const IsometricBackground = ({ levels }: IsometricBackgroundProps) => {
             <stop offset="50%" stopColor="#F7DC6F" stopOpacity="0.4" />
             <stop offset="100%" stopColor="#F4D03F" stopOpacity="0" />
           </radialGradient>
+          <linearGradient id="mountainHaze" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#B7CFC2" stopOpacity="0.75" />
+            <stop offset="100%" stopColor="#70A98B" stopOpacity="0.95" />
+          </linearGradient>
+          <linearGradient id="atmosphereOverlay" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#fff5d9" stopOpacity="0.08" />
+            <stop offset="55%" stopColor="#ffffff" stopOpacity="0" />
+            <stop offset="100%" stopColor="#142c39" stopOpacity="0.16" />
+          </linearGradient>
+          <radialGradient id="softSunHalo">
+            <stop offset="0%" stopColor="#fff9cf" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#fff9cf" stopOpacity="0" />
+          </radialGradient>
+          <filter id="cloudDiffusion" x="-15%" y="-50%" width="130%" height="200%">
+            <feGaussianBlur stdDeviation="1.8" />
+          </filter>
+          <filter id="subtleDepth" x="-25%" y="-25%" width="150%" height="160%">
+            <feDropShadow dx="4" dy="8" stdDeviation="5" floodColor="#173a48" floodOpacity="0.15" />
+          </filter>
         </defs>
         
         {/* Sky */}
         <rect width="1200" height="700" fill="url(#skyGradient)" />
         
+        {/* Soft high-altitude haze that adds depth behind all moving objects */}
+        <circle cx="95" cy="68" r="180" fill="url(#softSunHalo)" opacity="0.8" />
         {/* Sun with animated rays */}
         <g transform="translate(80, 60)">
           {/* Rotating sun rays */}
@@ -260,7 +281,7 @@ export const IsometricBackground = ({ levels }: IsometricBackgroundProps) => {
         ))}
         
         {/* Clouds - continuous drift with parallax and wind influence */}
-        <g opacity="0.85">
+        <g opacity="0.78" filter="url(#cloudDiffusion)">
           {[
             { y: 90, s: 1, dur: 80, start: 340 },
             { y: 50, s: 1.35, dur: 115, start: 640 },
@@ -293,8 +314,11 @@ export const IsometricBackground = ({ levels }: IsometricBackgroundProps) => {
           ))}
         </g>
         
+        {/* Distant misty hills and atmospheric perspective */}
+        <path d="M0 345 Q100 310 190 336 Q340 273 495 332 Q635 290 760 330 Q910 270 1070 321 Q1155 298 1200 320 V700 H0 Z" fill="url(#mountainHaze)" opacity="0.65" />
+        <path d="M0 375 Q185 334 295 351 Q460 320 610 357 Q800 304 950 350 Q1080 325 1200 350 V700 H0 Z" fill="#96C4A0" opacity="0.65" />
         {/* Background hills */}
-        <path d="M0 380 Q250 300 500 360 T1000 340 V700 H0 Z" fill="#82E0AA" />
+        <path d="M0 380 Q250 300 500 360 T1000 340 V700 H0 Z" fill="#82C999" />
         
         {/* Wind turbines - white 3-blade design */}
         {windTurbines >= 1 && (
@@ -378,7 +402,7 @@ export const IsometricBackground = ({ levels }: IsometricBackgroundProps) => {
         ))}
         
         {/* City buildings */}
-        <g transform="translate(40, 320)">
+        <g transform="translate(40, 320)" filter="url(#subtleDepth)">
           {/* Building 1 */}
           <path d="M0 90 L35 70 L35 0 L0 20 Z" fill="#5DADE2" />
           <path d="M35 70 L70 90 L70 20 L35 0 Z" fill="#3498DB" />
@@ -904,7 +928,7 @@ export const IsometricBackground = ({ levels }: IsometricBackgroundProps) => {
         </g>
         
         {/* Industrial area */}
-        <g transform="translate(820, 300)">
+        <g transform="translate(820, 300)" filter="url(#subtleDepth)">
           {/* Factory building */}
           <path d="M0 140 L55 110 L55 35 L0 65 Z" fill="#5D6D7E" />
           <path d="M55 110 L110 140 L110 65 L55 35 Z" fill="#34495E" />
@@ -1246,6 +1270,8 @@ export const IsometricBackground = ({ levels }: IsometricBackgroundProps) => {
             ))}
           </g>
         )}
+        {/* A subtle shared lighting layer makes objects feel part of one environment. */}
+        <rect x="0" y="0" width="1200" height="700" fill="url(#atmosphereOverlay)" pointerEvents="none" />
         </svg>
       </div>
     </MotionConfig>

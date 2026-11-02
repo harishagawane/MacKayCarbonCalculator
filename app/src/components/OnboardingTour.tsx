@@ -91,19 +91,19 @@ const TOUR_STEPS: TourStep[] = [
   },
   {
     title: 'Watch the CO₂ Meter',
-    description: 'The CO₂e meter on the right shows your progress. Aim for -100% to reach Net Zero by 2050!',
+    description: 'The score meter shows an educational policy index from 0 to 100. It is not a forecast of actual UK emissions or proof of net zero.',
     target: 'CO₂e',
     position: 'left',
   },
   {
     title: 'See Your Results',
-    description: 'Click "Go to results" or the play button to see detailed charts, pathway projections, sensitivity analysis, and more.',
+    description: 'Select Results or use the play button to explore illustrative charts, comparisons, downloadable reports, and sensitivity analysis.',
     target: 'results',
     position: 'top',
   },
   {
     title: 'Ready to Start!',
-    description: 'You\'re all set. Adjust the levers, explore presets, compare scenarios, and find your pathway to Net Zero. Click "Got it!" to begin.',
+    description: 'You\'re all set. Adjust the levers, explore preset scenarios and compare pathways. Hide the floating controls whenever you want an unobstructed landscape.',
     target: 'center',
     position: 'center',
   },

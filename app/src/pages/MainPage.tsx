@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { levers } from '@/data/levers';
 import { calculateEmissions } from '@/data/calculations';
 import type { Lever } from '@/types';
@@ -12,7 +12,7 @@ import { LeverModal } from '@/components/LeverModal';
 import { PresetsBar } from '@/components/PresetsBar';
 import { OnboardingTour } from '@/components/OnboardingTour';
 import { useSoundFx } from '@/hooks/useSoundFx';
-import { Info, Play, Volume2, VolumeX } from 'lucide-react';
+import { Info, Play, Volume2, VolumeX, ChevronDown, SlidersHorizontal, Maximize2 } from 'lucide-react';
 
 interface MainPageProps {
   levels: number[];
@@ -35,6 +35,7 @@ export const MainPage = ({
   const [selectedLever, setSelectedLever] = useState<Lever | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [isLeverModalOpen, setIsLeverModalOpen] = useState(false);
+  const [isDockOpen, setIsDockOpen] = useState(true);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(() => {
     try {return !window.localStorage.getItem('my2050-info-dismissed');} catch {return true;}
   });
@@ -61,21 +62,18 @@ export const MainPage = ({
 
   return (
     <motion.div
-      className="h-dvh flex flex-col overflow-y-auto overflow-x-hidden bg-[#87CEEB] dark:bg-slate-950 transition-colors duration-500"
+      className="relative isolate h-dvh min-h-[440px] w-full overflow-hidden bg-[#7FB6D3] dark:bg-slate-950 transition-colors duration-500"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {/* min-h keeps the animation window visible on short screens; the footer scrolls into view instead of collapsing the scene. */}
-      <div className="relative min-h-[180px] flex-1">
+      {/* Keep the landscape at full viewport height. Controls overlay it and may be collapsed. */}
+      <div className="absolute inset-0">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-slate-900/10 via-transparent to-slate-950/25 dark:from-slate-950/35 dark:to-slate-950/55" />
         <IsometricBackground levels={levels} />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] bg-transparent dark:bg-slate-950/30 transition-colors duration-500"
-        />
 
         <motion.div
-          className="absolute left-4 top-4 z-10 max-w-[calc(100%_-_7rem)]"
+          className="absolute left-3 right-32 top-3 z-20 sm:left-5 sm:right-40"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
@@ -83,9 +81,24 @@ export const MainPage = ({
           <PresetsBar presets={presets} activePreset={activePreset} onSelect={onApplyPreset} />
         </motion.div>
 
+        <section
+          aria-label="Scene introduction"
+          className="pointer-events-none absolute left-4 top-[76px] z-10 max-w-[min(420px,calc(100%-130px))] rounded-2xl border border-white/20 bg-slate-900/55 p-4 text-white shadow-2xl backdrop-blur-md sm:left-6 sm:top-[88px] sm:p-5"
+        >
+          <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.25em] text-emerald-200">Interactive pathway explorer · UK 2050</div>
+          <h1 className="text-xl font-bold leading-tight tracking-tight sm:text-3xl">Shape a living, lower-carbon world.</h1>
+          <p className="mt-2 hidden text-sm leading-relaxed text-white/85 sm:block">
+            Adjust a lever and watch the landscape respond — from railways and cleaner vehicles to forests and power generation.
+          </p>
+          <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-xs font-semibold text-white">
+            <span aria-hidden="true" className="h-2 w-2 rounded-full bg-emerald-300" />
+            {Math.round(emissions.totalReduction)}% illustrative policy score
+          </span>
+        </section>
+
         <motion.aside
           aria-label="Scenario progress and quick actions"
-          className="absolute right-3 top-20 bottom-32 z-20 flex w-[76px] flex-col items-center gap-2 rounded-2xl border border-white/70 bg-white/65 p-2 shadow-xl backdrop-blur-md dark:border-slate-600/70 dark:bg-slate-950/70 sm:right-4 sm:w-[84px]"
+          className="absolute right-3 top-[76px] z-20 flex h-[min(50dvh,430px)] w-[80px] flex-col items-center gap-2 rounded-[22px] border border-white/50 bg-white/80 p-2 shadow-2xl backdrop-blur-xl dark:border-slate-500/50 dark:bg-slate-900/80 sm:right-5 sm:top-[86px] sm:h-[min(55dvh,480px)] sm:w-[88px]"
           initial={{ x: 24, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.25, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
@@ -131,13 +144,34 @@ export const MainPage = ({
         </motion.aside>
       </div>
 
-      <motion.div
-        className="shrink-0"
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.35, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <ControlPanel
+      <AnimatePresence initial={false} mode="wait">
+        {isDockOpen ? (
+          <motion.div
+            key="immersive-policy-dock"
+            className="absolute inset-x-3 bottom-3 z-30 mx-auto max-w-[1580px] overflow-hidden rounded-[22px] border border-white/25 bg-slate-900/80 text-white shadow-[0_20px_70px_rgba(5,26,40,0.45)] backdrop-blur-2xl dark:border-slate-600/50 dark:bg-slate-950/85 sm:inset-x-5 sm:bottom-5"
+            initial={{ opacity: 0, y: 70 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 60 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+          >
+            <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-2.5">
+              <div className="flex min-w-0 items-center gap-2">
+                <SlidersHorizontal className="h-4 w-4 shrink-0 text-emerald-300" aria-hidden="true" />
+                <span className="truncate text-xs font-bold uppercase tracking-[0.18em] text-slate-50 sm:text-sm">
+                  Explore 15 policy levers
+                </span>
+                <span className="hidden text-xs text-white/60 md:inline">· Tap a lever name for details</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsDockOpen(false)}
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-white/20 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-300"
+                aria-label="Hide controls for a full-screen landscape"
+              >
+                <Maximize2 className="h-3.5 w-3.5" aria-hidden="true" /> <span className="hidden sm:inline">Explore full screen</span><span className="sm:hidden">Hide</span>
+              </button>
+            </div>
+            <ControlPanel
           levers={levers}
           levels={levels}
           onLevelChange={onLevelChange}
@@ -146,9 +180,23 @@ export const MainPage = ({
           onReset={onReset}
           onSaveComparison={onSaveComparison}
           hasComparison={hasComparison}
-          onClearComparison={onClearComparison}
-        />
-      </motion.div>
+              onClearComparison={onClearComparison}
+            />
+          </motion.div>
+        ) : (
+          <motion.button
+            key="open-policy-dock"
+            type="button"
+            onClick={() => setIsDockOpen(true)}
+            className="absolute bottom-5 left-1/2 z-30 inline-flex -translate-x-1/2 items-center gap-2 rounded-2xl border border-white/30 bg-slate-900/85 px-5 py-3 text-sm font-semibold text-white shadow-2xl backdrop-blur-xl hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-300"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 25 }}
+          >
+            <SlidersHorizontal className="h-4 w-4 text-emerald-300" aria-hidden="true" /> Show policy levers <ChevronDown className="h-4 w-4" aria-hidden="true" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       <InfoModal isOpen={isInfoModalOpen} onClose={handleDismissInfo} />
       <LeverModal

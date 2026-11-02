@@ -178,7 +178,8 @@ export const MainPage = ({
         </motion.aside>
       </div>
 
-      <AnimatePresence initial={false} mode="wait">
+      {/* Render the entering dock immediately so ResizeObserver can measure it after reopening. */}
+      <AnimatePresence initial={false} mode="sync">
         {isDockOpen ? (
           <motion.div
             key="immersive-policy-dock"

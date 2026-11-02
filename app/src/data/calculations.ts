@@ -123,23 +123,8 @@ export const getRailFleetInfo = (levels: number[]): RailFleetInfo => {
 
 export const encodeLevelsToUrl = (levels: number[]): string => safeLevels(levels).join('');
 export const validEncodedLevels = (encoded: string): boolean =>
-  new RegExp('^[1-4]{' + levers.length + '}export const getEnergyChartData = (levels: number[]) => {
-  const base2015 = { transport: 649, buildings: 701, industry: 332, fossilFuels: 1978, bioenergy: 143, nuclear: 180, renewables: 53 };
-  const valid = safeLevels(levels);
-  const scenario = calculateEmissions(valid);
-  const rf = 1 - (scenario.totalReduction / 100);
+  new RegExp('^[1-4]{' + levers.length + '}$').test(encoded);
 
-  return [
-    { category: 'Transport', value2015: base2015.transport, value2050: Math.round(base2015.transport * (0.9 + rf * 0.1)) },
-    { category: 'Building', value2015: base2015.buildings, value2050: Math.round(base2015.buildings * (0.8 + rf * 0.2)) },
-    { category: 'Industry & Agriculture', value2015: base2015.industry, value2050: Math.round(base2015.industry * (0.85 + rf * 0.15)) },
-    { category: 'Fossil Fuels', value2015: base2015.fossilFuels, value2050: Math.round(base2015.fossilFuels * rf) },
-    { category: 'Bioenergy', value2015: base2015.bioenergy, value2050: Math.round(base2015.bioenergy * (1 + (1 - rf) * 0.5)) },
-    { category: 'Nuclear', value2015: base2015.nuclear, value2050: Math.round(base2015.nuclear * (1 + (valid[9] - 1) * 0.5)) },
-    { category: 'Renewables', value2015: base2015.renewables, value2050: Math.round(base2015.renewables * (1 + (1 - rf) * 10)) },
-  ];
-};
-).test(encoded);
 export const decodeLevelsFromUrl = (encoded: string): number[] =>
   validEncodedLevels(encoded) ? encoded.split('').map(Number) : levers.map(() => 1);
 export const getEmissionsChartData = (levels: number[]) => {

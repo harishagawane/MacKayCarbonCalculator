@@ -5,7 +5,8 @@ import { useState, useEffect } from 'react';
 export const ThemeToggle = () => {
   const [isDark, setIsDark] = useState(() => {
     if (typeof window === 'undefined') return false;
-    const stored = window.localStorage.getItem('my2050-theme');
+    let stored: string|null = null;
+    try {stored=window.localStorage.getItem('my2050-theme');}catch{/* optional */}
     return stored ? stored === 'dark' : document.documentElement.classList.contains('dark');
   });
 
@@ -16,11 +17,12 @@ export const ThemeToggle = () => {
     } else {
       root.classList.remove('dark');
     }
-    localStorage.setItem('my2050-theme', isDark ? 'dark' : 'light');
+    try {window.localStorage.setItem('my2050-theme', isDark ? 'dark' : 'light');}catch{/* optional */}
   }, [isDark]);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem('my2050-theme');
+    let stored: string|null = null;
+    try {stored=window.localStorage.getItem('my2050-theme');}catch{/* optional */}
     if (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       setIsDark(true);
     }

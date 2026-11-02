@@ -9,7 +9,8 @@
     <!-- Prevent dark mode flash -->
     <script>
       (function() {
-        var t = localStorage.getItem('my2050-theme');
+        var t = null;
+        try {t = localStorage.getItem('my2050-theme');} catch (e) { /* optional */ }
         if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
           document.documentElement.classList.add('dark');
         }
@@ -20,9 +21,9 @@
     <meta property="og:type" content="website" />
     <meta property="og:title" content="My2050 Carbon Calculator" />
     <meta property="og:description" content="Create your pathway to a low carbon UK by 2050. Find the right mix of policies to reach Net Zero." />
-    <meta property="og:url" content="https://my2050-calculator.example.com" />
-    <meta property="og:image" content="https://my2050-calculator.example.com/og-image.png" />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:url" content="https://agawane.com/" />
+    <link rel="canonical" href="https://agawane.com/" />
+    <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="My2050 Carbon Calculator" />
     <meta name="twitter:description" content="Create your pathway to a low carbon UK by 2050." />
 

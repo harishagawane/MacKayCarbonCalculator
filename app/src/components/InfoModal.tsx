@@ -48,7 +48,7 @@ export const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
                     <span className="text-white text-[10px] font-bold">UK</span>
                   </div>
                   <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                    Department for Business, Energy & Industrial Strategy
+                    Independent educational UK pathway explorer
                   </span>
                 </div>
                 <motion.button
@@ -79,8 +79,7 @@ export const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 }}
                 >
-                  Find your pathway to reduce UK greenhouse gas emissions to Net Zero 
-                  by 2050 (-100% in the CO₂e meter) by:
+                  Explore an illustrative score by adjusting 15 policy levers. This is not the official UK MacKay scientific model. Try:
                 </motion.p>
                 
                 <motion.ul 
@@ -104,7 +103,7 @@ export const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.25 }}
                 >
-                  Find more information{' '}
+                  Find the official UK MacKay Calculator{' '}
                   <a 
                     href="https://www.gov.uk/guidance/carbon-calculator" 
                     target="_blank" 

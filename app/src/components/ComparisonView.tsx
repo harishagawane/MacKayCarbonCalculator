@@ -4,7 +4,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell,
   LineChart, Line, ReferenceLine
 } from 'recharts';
-import { calculateEmissions, getEmissionsChartData } from '@/data/calculations';
+import { calculateEmissions, getEmissionsChartData, getProjectedPathway } from '@/data/calculations';
 import { UK_HISTORICAL_EMISSIONS } from '@/data/ukEmissions';
 
 interface ComparisonViewProps {
@@ -39,19 +39,6 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-/** Generate S-curve pathway projection from 2025 to 2050 */
-const generatePathway = (totalReduction: number): { year: number; emissions: number }[] => {
-  const years = [2025, 2030, 2035, 2040, 2045, 2050];
-  return years.map(year => {
-    const t = (year - 2025) / 25;
-    const progress = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-    return {
-      year,
-      emissions: Math.round(800 * (1 - (totalReduction * progress) / 100)),
-    };
-  });
-};
-
 export const ComparisonView = ({ currentLevels, savedLevels }: ComparisonViewProps) => {
   const currentEmissions = useMemo(() => calculateEmissions(currentLevels), [currentLevels]);
   const savedEmissions = useMemo(() => calculateEmissions(savedLevels), [savedLevels]);
@@ -68,8 +55,8 @@ export const ComparisonView = ({ currentLevels, savedLevels }: ComparisonViewPro
   [currentChartData, savedChartData]);
 
   const pathwayData: PathwayPoint[] = useMemo(() => {
-    const currentPathway = generatePathway(currentEmissions.totalReduction);
-    const savedPathway = generatePathway(savedEmissions.totalReduction);
+    const currentPathway = getProjectedPathway(currentEmissions.totalReduction);
+    const savedPathway = getProjectedPathway(savedEmissions.totalReduction);
 
     // Start with historical data
     const result: PathwayPoint[] = UK_HISTORICAL_EMISSIONS.map(h => ({
@@ -110,7 +97,7 @@ export const ComparisonView = ({ currentLevels, savedLevels }: ComparisonViewPro
           transition={{ type: 'spring', stiffness: 300 }}>
           <div className="text-xs text-[#42A5F5] font-semibold mb-1">CURRENT SCENARIO</div>
           <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{Math.round(currentEmissions.totalReduction)}%</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">reduction from 1990</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">illustrative policy score</div>
           <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">{Math.round(currentEmissions.remainingEmissions)} MtCO₂e remaining</div>
         </motion.div>
         <motion.div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border-2 border-[#9E9E9E]"
@@ -134,7 +121,7 @@ export const ComparisonView = ({ currentLevels, savedLevels }: ComparisonViewPro
               <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
               <XAxis dataKey="category" stroke="var(--chart-text)" tick={{ fill: 'var(--chart-text)', fontSize: 11 }} />
               <YAxis stroke="var(--chart-text)" tick={{ fill: 'var(--chart-text)', fontSize: 12 }}
-                label={{ value: 'Emissions (% of 1990)', angle: -90, position: 'insideLeft', fill: 'var(--chart-text)', fontSize: 12 }} />
+                label={{ value: 'Model share (%)', angle: -90, position: 'insideLeft', fill: 'var(--chart-text)', fontSize: 12 }} />
               <Tooltip content={<CustomTooltip />} />
               <Legend wrapperStyle={{ paddingTop: '20px' }} />
               <Bar dataKey="reference" name="Reference (no action)" fill="#E0E0E0" radius={[4, 4, 0, 0]} />
@@ -153,7 +140,7 @@ export const ComparisonView = ({ currentLevels, savedLevels }: ComparisonViewPro
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, type: 'spring', stiffness: 300 }}>
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Emissions Pathway with Historical Data</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">UK historical emissions (1990-2023) with projected pathways for both scenarios to 2050.</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">Rounded UK emissions history through 2025 (provisional), then illustrative pathways to 2050.</p>
         <div className="w-full h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={pathwayData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -165,8 +152,8 @@ export const ComparisonView = ({ currentLevels, savedLevels }: ComparisonViewPro
               <Legend wrapperStyle={{ paddingTop: '20px' }} />
               <ReferenceLine y={0} stroke="#4CAF50" strokeWidth={2} strokeDasharray="5 5"
                 label={{ value: 'Net Zero', position: 'right', fill: '#4CAF50', fontSize: 11 }} />
-              <ReferenceLine x={2023} stroke="#9E9E9E" strokeWidth={1.5} strokeDasharray="4 4"
-                label={{ value: 'Now', position: 'top', fill: '#9E9E9E', fontSize: 10 }} />
+              <ReferenceLine x={2025} stroke="#9E9E9E" strokeWidth={1.5} strokeDasharray="4 4"
+                label={{ value: '2025 est.', position: 'top', fill: '#9E9E9E', fontSize: 10 }} />
               <Line type="monotone" dataKey="historicalEmissions" name="UK Historical Emissions"
                 stroke="#4CAF50" strokeWidth={3} dot={{ fill: '#4CAF50', r: 3 }} connectNulls={false} />
               <Line type="monotone" dataKey="savedEmissions" name="Saved Scenario Pathway"

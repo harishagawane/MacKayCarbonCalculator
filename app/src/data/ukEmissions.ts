@@ -1,7 +1,8 @@
 /**
  * UK Territorial Greenhouse Gas Emissions (MtCO₂e)
- * Based on UK Government / DESNZ official statistics.
- * 1990 baseline = 800 MtCO₂e (approximate, aligns with app baseline).
+ * Rounded educational sample points, not a complete official time series.
+ * 1990 is rounded to 800 MtCO₂e; 2025 is provisional. Excludes IAS.
+ * Source: https://www.gov.uk/government/collections/uk-territorial-greenhouse-gas-emissions-statistics
  */
 export interface HistoricalDataPoint {
   year: number;
@@ -22,6 +23,8 @@ export const UK_HISTORICAL_EMISSIONS: HistoricalDataPoint[] = [
   { year: 2021, emissions: 425, reductionFrom1990: 47 },
   { year: 2022, emissions: 410, reductionFrom1990: 49 },
   { year: 2023, emissions: 384, reductionFrom1990: 52 },
+  { year: 2024, emissions: 373, reductionFrom1990: 53 }, // final (rounded)
+  { year: 2025, emissions: 367, reductionFrom1990: 54 }, // provisional
 ];
 
 /**

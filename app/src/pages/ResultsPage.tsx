@@ -40,10 +40,14 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
 
   const hasComparison = !!comparisonLevels;
 
-  const handleShare = () => {
-    navigator.clipboard.writeText(getShareUrl());
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleShare = async () => {
+    const link = getShareUrl();
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch { window.prompt('Copy your scenario link:', link); }
   };
 
   const leverDetails = useMemo(() => {
@@ -139,8 +143,8 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
               >
                 {Math.round(emissions.totalReduction)}%
               </motion.div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Total Emissions Reduction</div>
-              <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">from 1990 baseline</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Illustrative Policy Score</div>
+              <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">normalised 15-lever index</div>
             </motion.div>
 
             <motion.div
@@ -159,7 +163,7 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
               >
                 {Math.round(emissions.remainingEmissions)}
               </motion.div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Remaining Emissions</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Illustrative Residual Emissions</div>
               <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">Megatonnes CO₂e/year</div>
             </motion.div>
 
@@ -176,14 +180,15 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ type: 'spring', stiffness: 400 }}
               >
-                {emissions.totalReduction >= 100 ? '✓ Net Zero!' : `${Math.round(100 - emissions.totalReduction)}%`}
+                {emissions.totalReduction >= 100 ? '✓ Maximum Score' : `${Math.round(100 - emissions.totalReduction)}%`}
               </motion.div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
-                {emissions.totalReduction >= 100 ? 'Target Achieved' : 'Remaining to Net Zero'}
+                {emissions.totalReduction >= 100 ? 'Model Maximum' : 'Remaining to Model Maximum'}
               </div>
             </motion.div>
           </div>
 
+          <p role="note" className="mt-4 rounded-lg bg-sky-50 p-3 text-sm text-slate-700 dark:bg-slate-800 dark:text-slate-200">Independent educational index only. Residual emissions, sector allocation and future energy are illustrative, not scientific forecasts or official MacKay model results.</p>
           <motion.div className="mt-4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
             <FeasibilityWarnings levels={levels} totalReduction={emissions.totalReduction} />
           </motion.div>
@@ -283,10 +288,10 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
                 transition={{ type: 'spring', stiffness: 300 }}
               >
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                  Emissions in 2050 with Emission Reductions
+                  Illustrative Policy Impact by Lever Group
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-                  Comparison between reference scenario (all levers at level 1) and your scenario.
+                  These normalised scores are not measured UK sectoral emissions.
                 </p>
                 <EmissionsChart data={emissionsChartData} />
                 <div className="mt-6 overflow-x-auto">
@@ -327,7 +332,7 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
                   Energy Consumption Levels in 2050 compared to 2015
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-                  Final energy demand and primary energy supply in 2050 relative to 2015.
+                  Simplified energy indicators, not a reconciled energy-system forecast.
                 </p>
                 <EnergyChart data={energyChartData} />
                 <div className="mt-6 overflow-x-auto">
@@ -371,7 +376,7 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
                   Emissions Pathway to 2050
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-                  UK historical emissions (1990-2023) with projected pathway based on your lever settings.
+                  Rounded published emissions through 2025 (2025 provisional), then illustrative interpolation.
                 </p>
                 <TimelineChart totalReduction={emissions.totalReduction} showHistorical />
               </motion.div>

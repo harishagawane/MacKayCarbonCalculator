@@ -36,11 +36,11 @@ export const MainPage = ({
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [isLeverModalOpen, setIsLeverModalOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(() => {
-    return !localStorage.getItem('my2050-info-dismissed');
+    try {return !window.localStorage.getItem('my2050-info-dismissed');} catch {return true;}
   });
 
   const handleDismissInfo = useCallback(() => {
-    localStorage.setItem('my2050-info-dismissed', 'true');
+    try {window.localStorage.setItem('my2050-info-dismissed','true');}catch{/* optional */}
     setIsInfoModalOpen(false);
   }, []);
 

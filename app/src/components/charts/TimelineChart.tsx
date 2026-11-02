@@ -1,41 +1,20 @@
 import { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { UK_HISTORICAL_EMISSIONS } from '@/data/ukEmissions';
+import { getProjectedPathway } from '@/data/calculations';
 
 interface TimelineChartProps {
   totalReduction: number;
   showHistorical?: boolean;
 }
 
-/**
- * Generates a projected emissions pathway from 2025 to 2050
- * based on the total reduction achieved in the scenario.
- * Uses an S-curve (logistic) projection for realistic deployment timing.
- */
-const generatePathway = (totalReduction: number) => {
-  const years = [2025, 2030, 2035, 2040, 2045, 2050];
-  return years.map(year => {
-    const t = (year - 2025) / 25;
-    const progress = t < 0.5
-      ? 2 * t * t
-      : 1 - Math.pow(-2 * t + 2, 2) / 2;
-    const reduction = totalReduction * progress;
-    const emissions = 800 * (1 - reduction / 100);
-    return {
-      year,
-      emissions: Math.round(emissions),
-      reduction: Math.round(reduction),
-    };
-  });
-};
-
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
-    const isHistorical = Number(label) <= 2023;
+    const isHistorical = Number(label) <= 2025;
     return (
       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 shadow-lg">
         <p className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
-          {label} {isHistorical ? '(Actual)' : '(Projected)'}
+          {label} {isHistorical ? '(Published estimate)' : '(Illustrative)'}
         </p>
         {payload.map((entry: any, idx: number) => (
           <p key={idx} className="text-sm" style={{ color: entry.color }}>
@@ -49,7 +28,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export const TimelineChart = ({ totalReduction, showHistorical = true }: TimelineChartProps) => {
-  const pathwayData = useMemo(() => generatePathway(totalReduction), [totalReduction]);
+  const pathwayData = useMemo(() => getProjectedPathway(totalReduction), [totalReduction]);
 
   // Merge historical + projected data
   const combinedData = useMemo(() => {
@@ -119,12 +98,12 @@ export const TimelineChart = ({ totalReduction, showHistorical = true }: Timelin
           />
           {/* Divider line at 2023 */}
           <ReferenceLine
-            x={2023}
+            x={2025}
             yAxisId="left"
             stroke="#9E9E9E"
             strokeWidth={1.5}
             strokeDasharray="4 4"
-            label={{ value: 'Now', position: 'top', fill: '#9E9E9E', fontSize: 10 }}
+            label={{ value: '2025 est.', position: 'top', fill: '#9E9E9E', fontSize: 10 }}
           />
           {showHistorical && (
             <Line

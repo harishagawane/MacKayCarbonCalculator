@@ -21,11 +21,8 @@ export default defineConfig({
     host: '0.0.0.0',
     port: previewPort,
     strictPort: true,
-    // Vite blocks requests whose Host header isn't localhost/IP unless whitelisted.
-    // Coolify's reverse proxy (and any CDN in front of it) may forward Host headers
-    // that aren't exactly the domain list, so relax the check entirely in preview:
-    // this is a static site behind a proxy, not a public dev server.
-    allowedHosts: true,
+    // Allow only explicit proxy hosts; operators can add other trusted domains.
+    allowedHosts: ['agawane.com','www.agawane.com',...(process.env.VITE_ALLOWED_HOSTS ?? '').split(',').map(h=>h.trim()).filter(Boolean)],
   },
   resolve: {
     alias: {

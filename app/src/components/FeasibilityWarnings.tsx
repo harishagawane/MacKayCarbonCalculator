@@ -43,9 +43,9 @@ export const FeasibilityWarnings = ({ levels, totalReduction }: FeasibilityWarni
 
     // Net zero achieved (uses actual emissions reduction)
     if (totalReduction >= 100) {
-      result.push({ type: 'success', message: 'This pathway achieves Net Zero by 2050. Well done!' });
+      result.push({ type: 'success', message: 'This selection reaches the illustrative score maximum; it does not prove real-world net zero.' });
     } else if (totalReduction >= 80) {
-      result.push({ type: 'success', message: `This pathway achieves ${Math.round(totalReduction)}% reduction — very close to Net Zero.` });
+      result.push({ type: 'success', message: `This pathway reaches ${Math.round(totalReduction)}% of the illustrative policy index, not a verified emissions reduction.` });
     }
 
     // Low effort warning
@@ -55,7 +55,7 @@ export const FeasibilityWarnings = ({ levels, totalReduction }: FeasibilityWarni
 
     // Carbon budget alignment
     if (totalReduction >= 60 && totalReduction < 80) {
-      result.push({ type: 'info', message: 'This pathway makes good progress but may fall short of the UK\'s 6th Carbon Budget (2033-2037).' });
+      result.push({ type: 'info', message: 'A simple score cannot demonstrate compliance with UK carbon budgets.' });
     }
 
     return result;

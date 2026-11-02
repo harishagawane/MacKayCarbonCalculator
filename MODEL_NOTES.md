@@ -138,3 +138,13 @@ animation loops, the dock-open camera shows the full railway, Heavy Vehicles
 levels 1-4 change rolling stock, other cargo levers update the freight,
 all 15 levers continue to respond, and reduced-motion mode shows still trains.
 Live browser acceptance is not yet independently verified.
+
+## Train visibility and perceptible motion fix
+
+Both trains are now 1.43× and 1.49× their earlier sizes, with brighter
+orange/blue/green liveries, lighter ballast, brighter railheads and fewer
+sleepers. Opposing trains shuttle over 235–390 scene units on 15–19 second
+loops instead of the barely perceptible 44–51 second motion. Travel ranges
+account for the longer train at Heavy Vehicles 3–4. The reduced-motion
+preference, rail signals, level crossing and policy-specific freight loads
+are preserved. Motion is illustrative, not a railway timetable.

@@ -21,15 +21,15 @@ const Wheel = ({ x, y, radius = 5 }: { x: number; y: number; radius?: number }) 
 const Locomotive = ({ power }: { power: RailPower }) => {
   const diesel = power === 'diesel';
   const hydrogen = power === 'hydrogen';
-  const body = diesel ? '#344957' : hydrogen ? '#0a806f' : '#145d91';
-  const dark = diesel ? '#233843' : hydrogen ? '#065a52' : '#124467';
-  const accent = diesel ? '#e6ae62' : hydrogen ? '#83e9b5' : '#a6dff7';
+  const body = diesel ? '#d99234' : hydrogen ? '#0aa78c' : '#1688c0';
+  const dark = diesel ? '#814c29' : hydrogen ? '#07574f' : '#144b74';
+  const accent = diesel ? '#fff4d0' : hydrogen ? '#d6fff1' : '#e4f8ff';
 
   return (
     <g>
       <ellipse cx="59" cy="-6" rx="58" ry="5.2" fill="#122a35" opacity=".27" />
       <path d="M3 -37 Q5 -47 20 -48 H94 Q106 -47 112 -37 V-15 L106 -10 H8 L2 -17 Z"
-        fill={body} stroke={dark} strokeWidth="1.4" />
+        fill={body} stroke="#152d3c" strokeWidth="1.8" />
       <path d="M3 -36 Q5 -45 20 -46 H94 Q105 -45 111 -36 H3 Z"
         fill="#cfe7ed" opacity=".28" />
       <path d="M6 -35 Q8 -43 21 -43 H28 V-26 H7 Z" fill="#c0e5ee" stroke="#1d4055" strokeWidth="1.4" />
@@ -37,6 +37,7 @@ const Locomotive = ({ power }: { power: RailPower }) => {
         fill="#b4dce8" stroke="#193f54" strokeWidth="1.2" />
       <path d="M7 -21 H105 V-16 H7 Z" fill={accent} />
       <path d="M9 -15 H106 V-12 H9 Z" fill={dark} />
+      <path d="M15 -33 H99" stroke="#ffffff" strokeWidth="1.4" strokeOpacity=".5" />
       <rect x="20" y="-10" width="74" height="4" rx="1" fill="#283b43" />
       <path d="M19 -7 H35 M82 -7 H99" stroke="#a1b2b8" strokeWidth="2" />
       {[21, 29, 37, 45].map(x => <path key={x} d={`M${x} -25 V-18`} stroke={dark} strokeWidth="1" opacity=".6" />)}
@@ -74,9 +75,9 @@ const PassengerCoach = ({ index }: { index: number }) => (
   <g transform={`translate(${124 + index * 110} 0)`}>
     <ellipse cx="49" cy="-6" rx="50" ry="4" fill="#102d36" opacity=".2" />
     <path d="M2 -41 Q4 -46 12 -46 H94 Q101 -45 102 -40 V-13 H1 Z"
-      fill={index % 2 ? '#dcebf0' : '#ecf4f4'} stroke="#6f929f" strokeWidth="1.1" />
+      fill={index % 2 ? '#deeff4' : '#f5fbfc'} stroke="#315c72" strokeWidth="1.6" />
     <path d="M2 -40 Q4 -45 12 -45 H94 Q100 -45 102 -40" stroke="#ffffff" strokeWidth="2" fill="none" />
-    <path d="M2 -21 H101 V-17 H2 Z" fill="#0d7196" />
+    <path d="M2 -21 H101 V-17 H2 Z" fill="#0a83c2" />
     <path d="M2 -15 H101 V-12 H2 Z" fill="#80b7c6" />
     {[9,27,45,63,81].map(x => (
       <g key={x}>
@@ -164,8 +165,8 @@ const Cargo = ({ kind }: { kind: FreightCargoId }) => {
 const FreightWagon = ({ kind, index }: { kind: FreightCargoId; index: number }) => (
   <g transform={`translate(${125 + index * 105} 0)`}>
     <ellipse cx="45" cy="-6" rx="49" ry="4.5" fill="#102b33" opacity=".2" />
-    <path d="M1 -35 H92 L89 -16 H5 Z" fill="#526a75" stroke="#2e4857" strokeWidth="1.5" />
-    <rect x="1" y="-35" width="92" height="5" rx="1" fill="#92a5a9" />
+    <path d="M1 -35 H92 L89 -16 H5 Z" fill="#7c929c" stroke="#203d50" strokeWidth="1.7" />
+    <rect x="1" y="-35" width="92" height="5" rx="1" fill="#d5e1e4" />
     <Cargo kind={kind} />
     <path d="M5 -16 H90" stroke="#a1b4ba" strokeWidth="2" />
     <rect x="6" y="-12" width="78" height="5" rx="2" fill="#2a3d47" />
@@ -187,12 +188,20 @@ export const RailwayScene = ({ heavyVehiclesLevel, freightCargo, animationRepeat
   const passengerPower: RailPower = heavyVehiclesLevel >= 2 ? 'electric' : 'diesel';
   const freightPower: RailPower = heavyVehiclesLevel >= 4 ? 'hydrogen'
     : heavyVehiclesLevel >= 2 ? 'electric' : 'diesel';
+  // Responsive to train length; faster, more obviously moving in both directions.
+  const isLongTrain = heavyVehiclesLevel >= 3;
+  const passengerTravel = isLongTrain ? 300 : 390;
+  const freightTravel = isLongTrain ? 235 : 345;
+  const passengerDuration = isLongTrain ? 15 : 17;
+  const freightDuration = isLongTrain ? 17 : 19;
   return (
     <g transform="translate(35 540)" aria-label="Two-track railway with passenger and freight trains">
       {/* Ballast and embankment: distinct shoulders, textured gravel and sleepers. */}
       <path d="M-20 -15 H1040 L1080 126 H-50 Z" fill="#415b62" opacity=".27" />
-      <path d="M-20 1 L1015 -2 L1070 120 H-45 Z" fill="#777a73" stroke="#c5c2ae" strokeWidth="2" />
-      <path d="M-17 8 H1020 L1054 110 H-37 Z" fill="#656e6a" />
+      <path d="M-20 1 L1015 -2 L1070 120 H-45 Z" fill="#a2a9a5" stroke="#d6d9cf" strokeWidth="2.2" />
+      <path d="M-17 8 H1020 L1054 110 H-37 Z" fill="#81908c" />
+      <path d="M-15 9 H1020 V59 H-31 Z" fill="#bac3ba" opacity=".22" />
+      <path d="M-24 74 H1036 L1053 111 H-37 Z" fill="#bac3ba" opacity=".2" />
       {Array.from({ length: 90 }, (_,i) => (
         <path key={i} d={`M${(i*47)%1040} ${14+(i*37)%96} l${2+i%3} 1 l-3 2 Z`}
           fill={i%3===0 ? '#d3cdc0' : '#293e43'} opacity={i%3===0 ? .35 : .23} />
@@ -200,9 +209,9 @@ export const RailwayScene = ({ heavyVehiclesLevel, freightCargo, animationRepeat
       {/* Rear and front tracks: each contains two rails and spaced sleepers. */}
       {[0, 63].map((offset,track) => (
         <g key={track} transform={`translate(0 ${offset})`}>
-          {Array.from({ length: 48 }, (_,i) => (
-            <g key={i} transform={`translate(${i*22} 0)`}>
-              <rect x="0" y="12" width="10" height="44" rx="1.3" fill="#584b42" />
+          {Array.from({ length: 35 }, (_,i) => (
+            <g key={i} transform={`translate(${i*30} 0)`}>
+              <rect x="0" y="12" width="12" height="44" rx="1.3" fill="#514e47" />
               <rect x="1" y="12" width="2" height="44" fill="#a28f7c" opacity=".52" />
               <path d="M2 16 H8 M2 52 H8" stroke="#252f33" strokeOpacity=".4" />
             </g>
@@ -210,7 +219,7 @@ export const RailwayScene = ({ heavyVehiclesLevel, freightCargo, animationRepeat
           {[22,43].map((y,i) => (
             <g key={i}>
               <rect x="-8" y={y} width="1060" height="5" rx="1" fill="#293e47" />
-              <rect x="-8" y={y} width="1060" height="1.4" fill="#d2e0df" />
+              <rect x="-8" y={y} width="1060" height="2.2" fill="#edf8f8" />
               <line x1="-8" x2="1052" y1={y+5} y2={y+5} stroke="#a0a6a1" strokeOpacity=".6" />
             </g>
           ))}
@@ -219,10 +228,10 @@ export const RailwayScene = ({ heavyVehiclesLevel, freightCargo, animationRepeat
       {/* Rear passenger service - clearly visible even in the first frame. */}
       <motion.g
         initial={false}
-        animate={{ x: [0, 80, 180, 280, 180, 80, 0] }}
-        transition={{ duration: 44, repeat: animationRepeat, ease: 'easeInOut' }}
+        animate={{ x: [0, passengerTravel, 0] }}
+        transition={{ duration: passengerDuration, repeat: animationRepeat, ease: 'easeInOut' }}
       >
-        <g transform="translate(65 40) scale(1.13)">
+        <g transform="translate(65 42) scale(1.43)">
           <Locomotive power={passengerPower} />
           {Array.from({ length: heavyVehiclesLevel >= 3 ? 3 : 2 }, (_,i) => (
             <PassengerCoach key={i} index={i} />
@@ -232,10 +241,10 @@ export const RailwayScene = ({ heavyVehiclesLevel, freightCargo, animationRepeat
       {/* Foreground freight, with dynamically selected cargo and cleaner fleets. */}
       <motion.g
         initial={false}
-        animate={{ x: [0, 65, 145, 225, 145, 65, 0] }}
-        transition={{ duration: 51, repeat: animationRepeat, ease: 'easeInOut', delay: -10 }}
+        animate={{ x: [freightTravel, 0, freightTravel] }}
+        transition={{ duration: freightDuration, repeat: animationRepeat, ease: 'easeInOut', delay: -4 }}
       >
-        <g transform="translate(105 101) scale(1.17)">
+        <g transform="translate(105 104) scale(1.49)">
           <Locomotive power={freightPower} />
           {Array.from({ length: heavyVehiclesLevel >= 3 ? 3 : 2 }, (_,i) => (
             <FreightWagon key={i} kind={freightCargo} index={i} />

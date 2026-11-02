@@ -28,3 +28,11 @@ test('train livery and cargo track policy levers', () => {
     assert.ok(railway.includes(marker), marker);
   }
 });
+
+test('trains visibly shuttle faster with brighter larger rolling stock', () => {
+  const railway = fs.readFileSync(path.join(__dirname,'../src/components/RailwayScene.tsx'),'utf8');
+  for (const marker of ['x: [0, passengerTravel, 0]', 'x: [freightTravel, 0, freightTravel]', 'passengerDuration = isLongTrain', 'freightDuration = isLongTrain', 'scale(1.43)', 'scale(1.49)', 'length: 35']) {
+    assert.ok(railway.includes(marker), marker);
+  }
+  assert.ok(!railway.includes('opacity: [0, 1, 1, 0]'));
+});

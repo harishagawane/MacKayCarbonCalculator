@@ -24,8 +24,8 @@ export const PRESET_SCENARIOS: PresetScenario[] = [
   },
   {
     id: 'government-plan',
-    name: 'Government Plan',
-    description: 'Follows current UK government commitments and trajectory',
+    name: 'Illustrative Policy Mix',
+    description: 'Example policy mix, not an official government plan or forecast',
     icon: '🏛️',
     levels: [2, 3, 2, 2, 2, 3, 2, 2, 2, 3, 3, 3, 1, 2, 2],
   },
@@ -45,8 +45,8 @@ export const PRESET_SCENARIOS: PresetScenario[] = [
   },
   {
     id: 'net-zero-society',
-    name: 'Net Zero Society',
-    description: 'Maximum ambition across all sectors to reach net zero',
+    name: 'Maximum Ambition',
+    description: 'All levers at maximum: highest model score, not verified net zero',
     icon: '🌍',
     levels: [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
   },

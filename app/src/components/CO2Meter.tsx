@@ -19,7 +19,7 @@ export const CO2Meter = ({ reductionPercentage }: CO2MeterProps) => {
   return (
     <div className="flex min-h-0 w-full flex-1 flex-col items-center text-center">
       <div className="mb-1 rounded-md bg-slate-900/85 px-1.5 py-1 text-[8px] font-semibold tracking-wide text-white shadow-sm dark:bg-white/90 dark:text-slate-900">
-        CO₂e
+        SCORE
       </div>
 
       <div className="mb-1 rounded bg-[#1A5276] px-1.5 py-0.5 text-[8px] font-semibold text-white shadow-sm">
@@ -32,7 +32,7 @@ export const CO2Meter = ({ reductionPercentage }: CO2MeterProps) => {
         animate={{ opacity: 1, scaleY: 1 }}
         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         style={{ transformOrigin: 'bottom' }}
-        aria-label={`CO2e reduction ${Math.round(animatedPercentage)} percent`}
+        aria-label={`Illustrative model score ${Math.round(animatedPercentage)} percent`}
       >
         <motion.div
           className="absolute inset-x-0 bottom-0"
@@ -77,7 +77,7 @@ export const CO2Meter = ({ reductionPercentage }: CO2MeterProps) => {
       </motion.div>
 
       <div className="mt-1 text-[8px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
-        Net Zero
+        Model max
       </div>
     </div>
   );

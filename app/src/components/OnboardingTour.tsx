@@ -37,7 +37,7 @@ interface TourStep {
 const TOUR_STEPS: TourStep[] = [
   {
     title: 'Welcome to My2050',
-    description: 'Create your own pathway to a low-carbon UK by 2050. Adjust 15 policy levers across 5 sectors to discover how we can reach Net Zero emissions.',
+    description: 'Create your own pathway to a low-carbon UK by 2050. Adjust 15 policy levers across 5 groups to explore illustrative choices, not official scientific forecasts.',
     target: 'center',
     position: 'center',
   },

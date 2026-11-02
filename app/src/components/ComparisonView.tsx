@@ -98,7 +98,7 @@ export const ComparisonView = ({ currentLevels, savedLevels }: ComparisonViewPro
           <div className="text-xs text-[#42A5F5] font-semibold mb-1">CURRENT SCENARIO</div>
           <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{Math.round(currentEmissions.totalReduction)}%</div>
           <div className="text-sm text-gray-500 dark:text-gray-400">illustrative policy score</div>
-          <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">{Math.round(currentEmissions.remainingEmissions)} MtCO₂e remaining</div>
+          <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">{Math.round(currentEmissions.remainingEmissions)} MtCO₂e (illustrative)</div>
         </motion.div>
         <motion.div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border-2 border-[#9E9E9E]"
           initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
@@ -113,8 +113,8 @@ export const ComparisonView = ({ currentLevels, savedLevels }: ComparisonViewPro
       <motion.div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm"
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, type: 'spring', stiffness: 300 }}>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Emissions Comparison by Category</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">Side-by-side comparison of emissions across categories for both scenarios.</p>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Illustrative Score Comparison by Category</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">Comparison of normalised score allocations, not measured UK sector emissions.</p>
         <div className="w-full h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={combinedEmissionsData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }} barGap={4}>
@@ -176,7 +176,7 @@ export const ComparisonView = ({ currentLevels, savedLevels }: ComparisonViewPro
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
           <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
             <div className="text-2xl font-bold text-[#42A5F5]">{Math.round(currentEmissions.totalReduction)}%</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Current Reduction</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Current Score</div>
           </div>
           <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
             <div className={`text-2xl font-bold ${
@@ -191,7 +191,7 @@ export const ComparisonView = ({ currentLevels, savedLevels }: ComparisonViewPro
           </div>
           <div className="text-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
             <div className="text-2xl font-bold text-gray-500">{Math.round(savedEmissions.totalReduction)}%</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Saved Reduction</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Saved Score</div>
           </div>
         </div>
       </motion.div>

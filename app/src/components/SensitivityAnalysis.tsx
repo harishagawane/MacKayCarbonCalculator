@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { levers } from '@/data/levers';
-import { calculateEmissions } from '@/data/calculations';
+import { calculateEmissions, IMPACT_TO_SCORE } from '@/data/calculations';
 import type { Lever } from '@/types';
 
 interface SensitivityAnalysisProps {
@@ -23,9 +23,9 @@ export const SensitivityAnalysis = ({ levels }: SensitivityAnalysisProps) => {
     return levers.map((lever, idx) => {
       const currentLevel = levels[idx];
       const levelData = lever.levels.find(l => l.level === currentLevel);
-      const currentImpact = levelData?.emissionsImpact || 0;
+      const currentImpact = (levelData?.emissionsImpact ?? 0) * IMPACT_TO_SCORE;
       const maxLevel = lever.levels[lever.levels.length - 1];
-      const maxPotential = maxLevel.emissionsImpact;
+      const maxPotential = maxLevel.emissionsImpact * IMPACT_TO_SCORE;
       return {
         lever,
         currentLevel,
@@ -55,7 +55,7 @@ export const SensitivityAnalysis = ({ levels }: SensitivityAnalysisProps) => {
       <div>
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Sensitivity Analysis</h3>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-          Which levers contribute most to your total emissions reduction.
+          Relative policy-lever contributions to the illustrative model score.
         </p>
       </div>
 
@@ -73,7 +73,7 @@ export const SensitivityAnalysis = ({ levels }: SensitivityAnalysisProps) => {
               <div>
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{item.lever.name}</span>
                 <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
-                  Level {item.currentLevel} — {item.currentImpact}% of max {item.maxPotential}%
+                  Level {item.currentLevel} — {item.currentImpact.toFixed(1)} pts of max {item.maxPotential.toFixed(1)} pts
                 </span>
               </div>
               <span className="text-xs font-semibold text-[#1A5276] dark:text-[#5DADE2]">
@@ -100,7 +100,7 @@ export const SensitivityAnalysis = ({ levels }: SensitivityAnalysisProps) => {
       {/* Category summary */}
       <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
         <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-          Category Contribution to {Math.round(currentTotal)}% Reduction
+          Category Contribution to {Math.round(currentTotal)}% Model Score
         </h4>
         <div className="space-y-2">
           {Object.entries(categoryImpact).map(([cat, data]) => (
@@ -114,7 +114,7 @@ export const SensitivityAnalysis = ({ levels }: SensitivityAnalysisProps) => {
               transition={{ duration: 0.5 }}
             />
           </div>
-              <span className="text-xs text-gray-500 dark:text-gray-400 w-12 text-right">{data.current}%</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 w-12 text-right">{data.current.toFixed(1)} pts</span>
             </div>
           ))}
         </div>

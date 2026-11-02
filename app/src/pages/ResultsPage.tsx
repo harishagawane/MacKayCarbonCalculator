@@ -58,10 +58,10 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
         ...lever,
         currentLevel: level,
         levelDescription: levelData?.description || '',
-        levelImpact: levelData?.emissionsImpact || 0,
+        levelImpact: emissions.leverImpacts[index],
       };
     });
-  }, [levels]);
+  }, [levels, emissions.leverImpacts]);
 
   const groupedLevers = useMemo(() => {
     const groups: Record<string, typeof leverDetails> = {};
@@ -164,7 +164,7 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
                 {Math.round(emissions.remainingEmissions)}
               </motion.div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Illustrative Residual Emissions</div>
-              <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">Megatonnes CO₂e/year</div>
+              <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">MtCO₂e/year (illustrative)</div>
             </motion.div>
 
             <motion.div
@@ -260,7 +260,7 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
                 {hasComparison && (
                   <TabsTrigger value="compare" className="flex-1 min-w-[120px]">📊 Compare</TabsTrigger>
                 )}
-                <TabsTrigger value="emissions" className="flex-1 min-w-[120px]">CO₂e Emissions</TabsTrigger>
+                <TabsTrigger value="emissions" className="flex-1 min-w-[120px]">Policy Scores</TabsTrigger>
                 <TabsTrigger value="energy" className="flex-1 min-w-[120px]">Energy</TabsTrigger>
                 <TabsTrigger value="timeline" className="flex-1 min-w-[120px]">Pathway</TabsTrigger>
                 <TabsTrigger value="sensitivity" className="flex-1 min-w-[120px]">Sensitivity</TabsTrigger>
@@ -329,7 +329,7 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
                 transition={{ type: 'spring', stiffness: 300 }}
               >
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                  Energy Consumption Levels in 2050 compared to 2015
+                  Illustrative Energy Indicators: 2015 and 2050
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
                   Simplified energy indicators, not a reconciled energy-system forecast.
@@ -417,7 +417,7 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
                                 transition={{ type: 'spring', stiffness: 500, delay: 0.7 + idx * 0.05 }}>
                                 Level {lever.currentLevel}
                               </motion.span>
-                              <span className="text-xs text-gray-500 dark:text-gray-400">+{lever.levelImpact}% reduction</span>
+                              <span className="text-xs text-gray-500 dark:text-gray-400">+{lever.levelImpact.toFixed(1)} score pts</span>
                             </div>
                           </div>
                           <p className="text-sm text-gray-600 dark:text-gray-400">{lever.levelDescription}</p>

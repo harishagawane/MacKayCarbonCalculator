@@ -46,11 +46,11 @@ export const EmissionsChart = ({ data }: EmissionsChartProps) => {
             tick={{ fill: 'var(--chart-text)', fontSize: 12 }}
             tickLine={{ stroke: 'var(--chart-grid)' }}
             axisLine={{ stroke: 'var(--chart-grid)' }}
-            label={{ value: 'Emissions (% of 1990)', angle: -90, position: 'insideLeft', fill: 'var(--chart-text)', fontSize: 12 }}
+            label={{ value: 'Model share (%)', angle: -90, position: 'insideLeft', fill: 'var(--chart-text)', fontSize: 12 }}
           />
           <Tooltip content={<CustomTooltip />} />
           <Legend wrapperStyle={{ paddingTop: '20px' }} />
-          <Bar dataKey="reference" name="Reference scenario (all level 1)" fill="#9E9E9E" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="reference" name="Reference weight (level 1)" fill="#9E9E9E" radius={[4, 4, 0, 0]} />
           <Bar dataKey="scenario" name="Your scenario" radius={[4, 4, 0, 0]}>
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.scenario < entry.reference ? '#42A5F5' : '#EF5350'} />

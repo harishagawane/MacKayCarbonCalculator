@@ -201,6 +201,31 @@ export const IsometricBackground = ({ levels, foregroundFocus = false }: Isometr
             <stop offset="0%" stopColor="#fff9cf" stopOpacity="0.6" />
             <stop offset="100%" stopColor="#fff9cf" stopOpacity="0" />
           </radialGradient>
+          <linearGradient id="detailMetal" x1="0%" x2="100%">
+            <stop offset="0%" stopColor="#a3bbc3"/><stop offset="42%" stopColor="#fff"/>
+            <stop offset="100%" stopColor="#8faab1"/>
+          </linearGradient>
+          <linearGradient id="detailBlade" x1="0%" x2="100%">
+            <stop offset="0%" stopColor="#b4cbd0"/><stop offset="48%" stopColor="#fff"/>
+            <stop offset="100%" stopColor="#e1eeec"/>
+          </linearGradient>
+          <linearGradient id="detailCloud" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#fff" stopOpacity=".98"/>
+            <stop offset="72%" stopColor="#f2f8fc" stopOpacity=".87"/>
+            <stop offset="100%" stopColor="#b8d0d8" stopOpacity=".72"/>
+          </linearGradient>
+          <linearGradient id="detailAsphalt" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#657982"/><stop offset="65%" stopColor="#5e727a"/>
+            <stop offset="100%" stopColor="#3b545b"/>
+          </linearGradient>
+          <linearGradient id="detailWater" x1="0%" y1="0%" x2="70%" y2="100%">
+            <stop offset="0%" stopColor="#b0dce2"/><stop offset="42%" stopColor="#5c9bb6"/>
+            <stop offset="100%" stopColor="#1d5b7b"/>
+          </linearGradient>
+          <linearGradient id="detailCanopy" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#9ed4a5"/><stop offset="50%" stopColor="#4e9770"/>
+            <stop offset="100%" stopColor="#27634c"/>
+          </linearGradient>
           <filter id="cloudDiffusion" x="-15%" y="-50%" width="130%" height="200%">
             <feGaussianBlur stdDeviation="1.8" />
           </filter>
@@ -319,85 +344,66 @@ export const IsometricBackground = ({ levels, foregroundFocus = false }: Isometr
           </motion.g>
         ))}
         
-        {/* Clouds - continuous drift with parallax and wind influence */}
-        <g opacity="0.78" filter="url(#cloudDiffusion)">
+        {/* Layered clouds drift slowly without an expensive moving blur filter. */}
+        <g opacity=".8" aria-hidden="true">
           {[
-            { y: 90, s: 1, dur: 80, start: 340 },
-            { y: 50, s: 1.35, dur: 115, start: 640 },
-            { y: 115, s: 0.75, dur: 66, start: 900 },
-            { y: 72, s: 1.1, dur: 98, start: 150 },
-          ].map((c, i) => (
-            <motion.g
-              key={i}
-              initial={{ x: c.start, y: c.y }}
-              animate={{
-                x: [c.start, 1750, -400, c.start],
-                y: [c.y, c.y - 6, c.y, c.y - 6],
-              }}
-              transition={{
-                x: {
-                  duration: c.dur / (1 + windLevel * 0.1),
-                  repeat: animationRepeat,
-                  times: [0, 0.4, 0.44, 1],
-                  ease: "linear",
-                },
-                y: { duration: 26 + i * 7, repeat: animationRepeat, ease: "easeInOut" },
-              }}
-            >
-              <g transform={`scale(${c.s})`}>
-                <ellipse cx="250" cy="0" rx="60" ry="28" fill="white" />
-                <ellipse cx="290" cy="-14" rx="45" ry="22" fill="white" />
-                <ellipse cx="210" cy="-10" rx="40" ry="20" fill="white" />
+            { y:90, scale:1, duration:130, start:340 },
+            { y:50, scale:1.35, duration:175, start:640 },
+            { y:115, scale:.75, duration:118, start:900 },
+            { y:72, scale:1.1, duration:150, start:150 },
+          ].map((cloud,i) => (
+            <motion.g key={i}
+              initial={{ x:cloud.start, y:cloud.y }}
+              animate={{ x:[cloud.start,cloud.start+140,cloud.start-110,cloud.start],
+                y:[cloud.y,cloud.y-5,cloud.y+3,cloud.y] }}
+              transition={{ duration:cloud.duration/(1+(windLevel-1)*.06),
+                repeat:animationRepeat, ease:'easeInOut', delay:i*2 }}>
+              <g transform={`scale(${cloud.scale})`}>
+                <ellipse cx="250" cy="13" rx="72" ry="18" fill="#7b99a5" opacity=".12"/>
+                <path d="M172 6 C174 -15 196 -27 220 -23 C230 -45 268 -46 287 -24 C311 -35 344 -16 337 4 C349 14 338 26 319 27 L192 27 C176 23 167 14 172 6 Z" fill="url(#detailCloud)"/>
+                <path d="M190 3 Q209 -14 232 -12 M243 -22 Q268 -35 288 -15" fill="none"
+                  stroke="#fff" strokeWidth="4" strokeOpacity=".26" strokeLinecap="round"/>
               </g>
             </motion.g>
           ))}
         </g>
-        
+
         {/* Distant misty hills and atmospheric perspective */}
         <path d="M-2200 340 Q-1600 300 -1200 335 Q-850 298 -460 335 Q-180 310 0 345 Q100 310 190 336 Q340 273 495 332 Q635 290 760 330 Q910 270 1070 321 Q1155 298 1200 320 Q1600 307 2000 345 Q2600 320 3400 345 V700 H-2200 Z" fill="url(#mountainHaze)" opacity="0.65" />
         <path d="M-2200 380 Q-1620 333 -1120 365 Q-700 324 -320 370 Q-110 352 0 375 Q185 334 295 351 Q460 320 610 357 Q800 304 950 350 Q1080 325 1200 350 Q1720 317 2190 374 T3400 360 V700 H-2200 Z" fill="#96C4A0" opacity="0.65" />
         {/* Background hills */}
         <path d="M-2200 385 Q-1550 320 -950 383 Q-500 321 0 380 Q250 300 500 360 T1000 340 Q1510 335 2050 374 T3400 385 V700 H-2200 Z" fill="#82C999" />
         
-        {/* Wind turbines - white 3-blade design */}
+        {/* Tapered towers, slender aerodynamic blades, naturally paced rotations. */}
         {windTurbines >= 1 && (
-          <g>
-            {[0, 1, 2].map(i => (
-              <g key={i} transform={`translate(${100 + i * 100}, ${240 + i * 10})`}>
-                {/* Tower */}
-                <rect x="-3" y="0" width="6" height="100" fill="#ECF0F1" />
-                
-                {/* Nacelle */}
-                <ellipse cx="0" cy="0" rx="8" ry="5" fill="#BDC3C7" />
-                
-                {/* Rotating blades */}
-                <motion.g
-                  animate={{ rotate: 360 }}
-                  transition={{
-                    duration: (windLevel <= 2 ? 5 : windLevel === 3 ? 3 : 2) + i * 0.35,
-                    repeat: animationRepeat,
-                    delay: i * 0.25,
-                    ease: "linear",
-                  }}
-                >
-                  {/* Blade 1 */}
-                  <ellipse cx="0" cy="-45" rx="6" ry="45" fill="white" stroke="#BDC3C7" strokeWidth="1" />
-                  {/* Blade 2 */}
-                  <ellipse cx="39" cy="22" rx="6" ry="45" fill="white" stroke="#BDC3C7" strokeWidth="1" transform="rotate(120 39 22)" />
-                  {/* Blade 3 */}
-                  <ellipse cx="-39" cy="22" rx="6" ry="45" fill="white" stroke="#BDC3C7" strokeWidth="1" transform="rotate(240 -39 22)" />
+          <g aria-label="Wind turbines">
+            {Array.from({length:windLevel >= 3 ? 5 : 3}, (_,i) => (
+              <g key={i} transform={`translate(${100+i*100},${240+i*10}) scale(${i>=3?.72:1})`}>
+                <ellipse cx="16" cy="105" rx="36" ry="8" fill="#265b50" opacity=".15"/>
+                <path d="M-5 101 L-2 -2 L2 -2 L5 101 Z" fill="url(#detailMetal)"
+                  stroke="#93aeb4" strokeWidth=".7"/>
+                <path d="M-2 -3 Q6 -11 14 -7 L17 -1 Q9 4 -1 2 Z" fill="#ebf4f3"
+                  stroke="#90aab2" strokeWidth=".8"/>
+                <motion.g animate={{rotate:360}}
+                  transition={{duration:(windLevel<=2?15:windLevel===3?12:10)+i*.8,
+                    repeat:animationRepeat, ease:'linear',delay:-i*2}}
+                  style={{transformOrigin:'0px 0px'}}>
+                  {[0,120,240].map(angle => (
+                    <g key={angle} transform={`rotate(${angle})`}>
+                      <path d="M-2 -3 C-4 -18 -8 -43 -7 -62 C-6 -73 -2 -78 0 -78 C2 -76 3 -67 3 -57 L4 -11 L2 -3 Z"
+                        fill="url(#detailBlade)" stroke="#a5b8bf" strokeWidth=".8"/>
+                      <path d="M0 -7 Q-3 -36 -3 -63" stroke="#adc2c8" strokeWidth=".7"
+                        strokeOpacity=".5" fill="none"/>
+                    </g>
+                  ))}
                 </motion.g>
-                
-                {/* Hub */}
-                <circle cx="0" cy="0" r="5" fill="#95A5A6" />
-                
-                {/* Shadow */}
-                <ellipse cx="0" cy="100" rx="25" ry="6" fill="black" opacity="0.1" />
+                <circle r="5" fill="#edf4f3" stroke="#879fa5" strokeWidth="1"/>
+                <circle r="1.5" fill="#879fa5"/>
               </g>
             ))}
           </g>
         )}
-        
+
         {/* Main landscape */}
         <path d="M-2200 430 Q-1670 377 -1100 412 Q-500 368 0 420 Q350 360 700 390 T1200 370 Q1710 382 2180 403 T3400 423 V700 H-2200 Z" fill="url(#grassGradient)" />
         
@@ -418,7 +424,11 @@ export const IsometricBackground = ({ levels, foregroundFocus = false }: Isometr
         </g>
 
         {/* River */}
-        <path d="M550 400 Q650 430 750 410 Q850 390 950 420 L1050 700 H900 L800 480 Q750 460 700 480 Q650 500 600 480 Z" fill="url(#waterGradient)" />
+        <path d="M550 400 Q650 430 750 410 Q850 390 950 420 L1050 700 H900 L800 480 Q750 460 700 480 Q650 500 600 480 Z" fill="url(#detailWater)" />
+        <path d="M550 402 Q650 433 750 413 Q850 392 950 422" fill="none"
+          stroke="#c8e8d8" strokeWidth="4" opacity=".55"/>
+        <path d="M650 442 Q744 463 813 441 M600 480 Q677 505 736 478"
+          fill="none" stroke="#d4f1f1" strokeWidth="2" opacity=".35"/>
         
         {/* Water ripples */}
         {[...Array(6)].map((_, i) => (          <motion.ellipse
@@ -521,12 +531,19 @@ export const IsometricBackground = ({ levels, foregroundFocus = false }: Isometr
           </g>
         </g>
         
-        {/* Road */}
-        <path d="M180 460 L480 440 L880 480 L1100 700 L80 700 Z" fill="#7F8C8D" />
-        <path d="M230 480 L260 478" stroke="#F4F6F7" strokeWidth="3" strokeDasharray="15 12" />
-        <path d="M330 475 L430 468" stroke="#F4F6F7" strokeWidth="3" strokeDasharray="15 12" />
-        <path d="M530 470 L730 485" stroke="#F4F6F7" strokeWidth="3" strokeDasharray="15 12" />
-        
+        {/* Shaded asphalt and perspective road markings. */}
+        <path d="M180 460 L480 440 L880 480 L1100 700 L80 700 Z" fill="url(#detailAsphalt)"/>
+        <path d="M180 460 L480 440 L880 480 L1100 700" fill="none"
+          stroke="#bdcbbd" strokeWidth="3.5" opacity=".6"/>
+        <path d="M180 460 L80 700" fill="none" stroke="#aabdb2" strokeWidth="3" opacity=".46"/>
+        <path d="M230 480 L260 478 M330 475 L430 468 M530 470 L730 485"
+          stroke="#eef1e8" strokeWidth="3" strokeDasharray="15 12" fill="none"/>
+        <g fill="#293e48" opacity=".11" aria-hidden="true">
+          {Array.from({length:8},(_,i) => (
+            <path key={i} d={`M${225+i*80} ${524+(i%3)*16} l12 1 l-4 2 Z`}/>
+          ))}
+        </g>
+
         {/* Moving vehicles */}
         {lightVehiclesLevel >= 2 && (
           <motion.g
@@ -666,13 +683,19 @@ export const IsometricBackground = ({ levels, foregroundFocus = false }: Isometr
 
         {/* Train tracks - always part of the landscape */}
         <g transform="translate(80, 560)">
-          <rect x="0" y="0" width="800" height="7" fill="#5D4037" />
-          <rect x="0" y="18" width="800" height="7" fill="#5D4037" />
-          {[0, 1, 2, 3, 4, 5, 6, 7].map(i => (
-            <rect key={i} x={i * 100} y="0" width="7" height="57" fill="#3E2723" />
+          <path d="M-5 -5 H805 V62 H-5 Z" fill="#5b6865" opacity=".32"/>
+          {Array.from({length:41},(_,i) => (
+            <g key={i} transform={`translate(${i*20} 0)`}>
+              <rect x="0" y="-3" width="6" height="62" rx="1" fill="#58473f"/>
+              <rect x=".8" y="-3" width="1.3" height="62" fill="#a09182" opacity=".55"/>
+            </g>
           ))}
-          <rect x="0" y="32" width="800" height="7" fill="#5D4037" />
-          <rect x="0" y="50" width="800" height="7" fill="#5D4037" />
+          {[3,21,35,53].map((y,i) => (
+            <g key={i}>
+              <rect x="0" y={y} width="800" height="4" fill="#263e46"/>
+              <rect x="0" y={y} width="800" height="1.3" fill="#c6d3d3"/>
+            </g>
+          ))}
 
           {/* Train - diesel freight at level 1, electric passenger rail at level 2+, faster as the lever rises */}
           {heavyVehiclesLevel <= 1 ? (
@@ -989,11 +1012,17 @@ export const IsometricBackground = ({ levels, foregroundFocus = false }: Isometr
           <path d="M55 110 L110 140 L110 65 L55 35 Z" fill="#34495E" />
           <path d="M0 65 L55 35 L110 65 L55 95 Z" fill="#85929E" />
           
+          {/* Roof and façade depth details. */}
+          <path d="M0 65 L55 35 L110 65 L55 95 Z" fill="#8ba1ad" opacity=".76"/>
+          {[0,1,2,3].map(i => (
+            <rect key={i} x={9+i*10} y={95-i*4} width="6" height="10"
+              fill="#b3d3dc" opacity=".62"/>
+          ))}
           {/* Smokestacks */}
-          <rect x="18" y="-35" width="12" height="65" fill="#5D6D7E" />
+          <rect x="18" y="-35" width="12" height="65" fill="url(#detailMetal)" />
           <ellipse cx="24" cy="-35" rx="8" ry="2.5" fill="#34495E" />
           
-          <rect x="45" y="-25" width="10" height="55" fill="#5D6D7E" />
+          <rect x="45" y="-25" width="10" height="55" fill="url(#detailMetal)" />
           <ellipse cx="50" cy="-25" rx="7" ry="2" fill="#34495E" />
           
           {/* Animated smoke particles */}
@@ -1013,13 +1042,13 @@ export const IsometricBackground = ({ levels, foregroundFocus = false }: Isometr
                     scale: [1, 1.8]
                   }}
                   transition={{ 
-                    duration: 4, 
-                    repeat: animationRepeat, 
+                    duration: 7 + (i % 3) * .7,
+                    repeat: animationRepeat,
                     ease: "easeOut",
-                    delay: i * 0.6
+                    delay: i * 1.05
                   }}
                 >
-                  <ellipse rx={10 + i * 1.5} ry={5 + i * 0.8} fill="#BFC9CA" opacity={carbonCaptureLevel === 1 ? 0.6 : 0.35} />
+                  <ellipse rx={10 + i * 1.5} ry={5 + i * 0.8} fill="#BFC9CA" opacity={carbonCaptureLevel === 1 ? .38 : .22} />
                 </motion.g>
               ))}
             </>
@@ -1128,10 +1157,12 @@ export const IsometricBackground = ({ levels, foregroundFocus = false }: Isometr
               }}
               style={{ transformOrigin: 'bottom center' }}
             >
-              <polygon points="0,0 -12,35 12,35" fill="#27AE60" />
-              <polygon points="0,-18 -10,15 10,15" fill="#2ECC71" />
-              <polygon points="0,-32 -7,0 7,0" fill="#58D68D" />
-              <rect x="-2.5" y="35" width="5" height="8" fill="#6E2C00" />
+              <ellipse cx="2" cy="43" rx="12" ry="3.5" fill="#205b4a" opacity=".17"/>
+              <path d="M-3 32 V44 H2 V32 Z" fill="#755944"/>
+              <path d="M0 -38 C-5 -22 -13 -4 -16 21 Q-7 17 0 17 Q9 19 17 21 C12 2 5 -23 0 -38 Z"
+                fill="url(#detailCanopy)"/>
+              <path d="M0 -35 Q-9 -14 -13 14" stroke="#a4d9ad" strokeOpacity=".35"
+                fill="none" strokeWidth="1"/>
             </motion.g>
           ))}
           

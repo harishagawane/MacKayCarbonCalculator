@@ -104,3 +104,15 @@ mask blends the bottom of the animation into the full-viewport background.
 The control dock still reserves its measured height, and closing the dock
 restores the unobstructed scene. No policy calculation or animation behaviour
 was changed by this layout update.
+
+## Scene realism pass — 2 November 2026
+
+The lightweight SVG animation now includes tapered wind turbine blades, slower
+rotation, volumetric gradient clouds without moving blur filters, depth-shaded
+asphalt, more realistic river colours and banks, steel rails and sleepers,
+factory shading, slower industrial plumes and shaded conifers.
+
+All 15 policy inputs remain wired to the original animated scene; the
+existing full-screen/dock framing and reduced-motion support remain.
+Visual realism is artistic, **not** an energy-generation or emissions model.
+A full production build and visual/browser acceptance are still required.

@@ -105,8 +105,8 @@ export const ComparisonView = ({ currentLevels, savedLevels }: ComparisonViewPro
           transition={{ type: 'spring', stiffness: 300 }}>
           <div className="text-xs text-gray-500 font-semibold mb-1">SAVED SCENARIO</div>
           <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{Math.round(savedEmissions.totalReduction)}%</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">reduction from 1990</div>
-          <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">{Math.round(savedEmissions.remainingEmissions)} MtCO₂e remaining</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">illustrative policy score</div>
+          <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">{Math.round(savedEmissions.remainingEmissions)} MtCO₂e (illustrative)</div>
         </motion.div>
       </div>
 
@@ -164,7 +164,7 @@ export const ComparisonView = ({ currentLevels, savedLevels }: ComparisonViewPro
           </ResponsiveContainer>
         </div>
         <div className="flex items-center gap-6 mt-4 text-xs text-gray-500 dark:text-gray-400">
-          <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 bg-[#4CAF50]" /><span>Historical (actual)</span></div>
+          <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 bg-[#4CAF50]" /><span>Rounded history (2025 provisional)</span></div>
           <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 bg-[#42A5F5]" /><span>Projected</span></div>
         </div>
       </motion.div>

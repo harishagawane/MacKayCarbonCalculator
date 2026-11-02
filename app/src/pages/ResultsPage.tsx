@@ -9,6 +9,8 @@ import { calculateEmissions, getEmissionsChartData, getEnergyChartData, getFreig
 import { FeasibilityWarnings } from '@/components/FeasibilityWarnings';
 import { SensitivityAnalysis } from '@/components/SensitivityAnalysis';
 import { ExportButton } from '@/components/ExportButton';
+import { ScenarioDataExport } from '@/components/ScenarioDataExport';
+import { ScenarioInsights } from '@/components/ScenarioInsights';
 import { ComparisonView } from '@/components/ComparisonView';
 import { levers } from '@/data/levers';
 import { CATEGORY_NAMES } from '@/types';
@@ -104,6 +106,7 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
 
             <div className="flex items-center gap-2">
               <ExportButton targetRef={resultsRef} />
+              <ScenarioDataExport levels={levels} comparisonLevels={comparisonLevels} />
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   onClick={handleShare}
@@ -189,6 +192,7 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
           </div>
 
           <p role="note" className="mt-4 rounded-lg bg-sky-50 p-3 text-sm text-slate-700 dark:bg-slate-800 dark:text-slate-200">Independent educational index only. Residual emissions, sector allocation and future energy are illustrative, not scientific forecasts or official MacKay model results.</p>
+          <ScenarioInsights levels={levels} onEdit={onBack} />
           <motion.div className="mt-4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
             <FeasibilityWarnings levels={levels} totalReduction={emissions.totalReduction} />
           </motion.div>

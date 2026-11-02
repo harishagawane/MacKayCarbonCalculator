@@ -41,18 +41,19 @@ export const ControlPanel = ({
 
   const getCategoryLevers = (cat: string) => levers.filter(l => l.category === cat);
 
-  const handleHandleKeyDown = (e: React.KeyboardEvent, globalIndex: number, currentLevel: number) => {
-    let newLevel = currentLevel;
-    if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
-      e.preventDefault();
-      newLevel = Math.min(currentLevel + 1, 4);
-    } else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
-      e.preventDefault();
-      newLevel = Math.max(currentLevel - 1, 1);
+  const handleSliderKeyDown = (e: React.KeyboardEvent, globalIndex: number, currentLevel: number) => {
+    // Stop arrow/home/end keys on the slider from activating its surrounding lever card.
+    const increment = e.key === 'ArrowUp' || e.key === 'ArrowRight' || e.key === 'PageUp';
+    const decrement = e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'PageDown';
+    if (!increment && !decrement && e.key !== 'Home' && e.key !== 'End') {
+      if (e.key === 'Enter' || e.key === ' ') e.stopPropagation();
+      return;
     }
-    if (newLevel !== currentLevel) {
-      onLevelChange(globalIndex, newLevel);
-    }
+    e.preventDefault();
+    e.stopPropagation();
+    const next = e.key === 'Home' ? 1 : e.key === 'End' ? 4
+      : Math.min(4, Math.max(1, currentLevel + (increment ? 1 : -1)));
+    if (next !== currentLevel) onLevelChange(globalIndex, next);
   };
 
   const handleLeverKeyDown = (e: React.KeyboardEvent, lever: Lever, globalIndex: number) => {
@@ -77,7 +78,7 @@ export const ControlPanel = ({
                 return (
                   <motion.div
                     key={lever.id}
-                    className="flex flex-col items-center cursor-pointer group"
+                    className="flex flex-col items-center cursor-pointer group rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                     onClick={() => onLeverClick(lever, globalIndex)}
                     onKeyDown={(e) => handleLeverKeyDown(e, lever, globalIndex)}
                     tabIndex={0}
@@ -118,7 +119,7 @@ export const ControlPanel = ({
                       />
 
                       <motion.div
-                        className="absolute left-1/2 w-4 h-4 rounded-full border-2 border-white shadow-md cursor-pointer z-10 -ml-2"
+                        className="absolute left-1/2 w-4 h-4 rounded-full border-2 border-white shadow-md cursor-pointer z-10 -ml-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600"
                         style={{ backgroundColor: currentLevel >= 3 ? '#2E86C1' : '#5DADE2' }}
                         initial={{ bottom: '10%' }}
                         animate={{ bottom: `${(currentLevel - 1) * 25 + 6}%` }}
@@ -130,7 +131,7 @@ export const ControlPanel = ({
                           const newLevel = currentLevel >= 4 ? 1 : currentLevel + 1;
                           onLevelChange(globalIndex, newLevel);
                         }}
-                        onKeyDown={(e) => handleHandleKeyDown(e, globalIndex, currentLevel)}
+                        onKeyDown={(e) => handleSliderKeyDown(e, globalIndex, currentLevel)}
                         tabIndex={0}
                         role="slider"
                         aria-label={`${lever.name} level`}

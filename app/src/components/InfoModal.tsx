@@ -29,6 +29,9 @@ export const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
             exit={{ opacity: 0 }}
           >
             <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="info-modal-heading"
               className="bg-white dark:bg-gray-800 rounded-lg max-w-xl w-full max-h-[90vh] overflow-y-auto pointer-events-auto shadow-2xl dark:border dark:border-gray-700"
               initial={{ scale: 0.85, opacity: 0, y: 30 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -53,6 +56,7 @@ export const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
                 </div>
                 <motion.button
                   onClick={onClose}
+                  aria-label="Close information dialog"
                   className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
                   whileHover={{ scale: 1.12, rotate: 90 }}
                   whileTap={{ scale: 0.88 }}
@@ -65,6 +69,7 @@ export const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
               {/* Content */}
               <div className="p-5">
                 <motion.h2 
+                  id="info-modal-heading"
                   className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3"
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -123,7 +128,7 @@ export const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
                   rel="noopener noreferrer"
                   className="text-[#1A5276] dark:text-[#5DADE2] hover:underline text-xs font-medium"
                 >
-                  Conditions of Use
+                  Official methodology
                 </a>
               </div>
             </motion.div>

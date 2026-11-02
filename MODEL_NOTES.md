@@ -28,3 +28,22 @@ Vite preview limits allowed hostnames; customise with VITE_ALLOWED_HOSTS.
 Run `npm ci && npm run build && npm run lint` in app/ to validate with
 the full dependency tree. A local npm build was not run in the connector
 execution environment.
+
+## Results improvements (November 2026)
+
+The Results page can export transparent, machine-readable **CSV and JSON**
+reports with the selected level of every lever, total normalised policy score,
+illustrative residual, model disclaimer, and an optional saved comparison.
+The new "Biggest remaining score opportunities" section ranks the top three
+levers by extra **index points** they would earn at level 4. It does not
+estimate feasibility, cost, or real-world abatement.
+
+Regression tests live in `app/tests/calculations.test.cjs`. Run
+`npm test`, `npm run lint`, and `npm run build` from `app/`.
+The model tests exercise endpoint scores, URL validation, sector accounting,
+scenario exports, opportunities and the historical projection anchor. They
+do not substitute for a browser/production smoke test.
+
+Security note: dependency issues reported by `npm audit` should be triaged
+against the lockfile with patched versions that do not disrupt the build;
+`npm audit fix --force` has not been run.

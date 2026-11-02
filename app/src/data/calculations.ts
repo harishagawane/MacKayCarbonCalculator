@@ -121,6 +121,34 @@ export const getRailFleetInfo = (levels: number[]): RailFleetInfo => {
   };
 };
 
+export interface LeverOpportunity {
+  id: string;
+  name: string;
+  category: Category;
+  currentLevel: number;
+  remainingPoints: number;
+}
+
+/** Score-point headroom if a lever moves to its highest defined ambition level. */
+export const getTopRemainingLevers = (levels: number[], limit = 3): LeverOpportunity[] => {
+  const selected = safeLevels(levels);
+  const count = Number.isFinite(limit) ? Math.max(0, Math.min(levers.length, Math.trunc(limit))) : 0;
+  return levers.map((lever, index) => {
+    const current = lever.levels.find(option => option.level === selected[index]);
+    const maximum = Math.max(...lever.levels.map(option => option.emissionsImpact));
+    return {
+      id: lever.id,
+      name: lever.name,
+      category: lever.category,
+      currentLevel: selected[index],
+      remainingPoints: Math.max(0, (maximum - (current?.emissionsImpact ?? 0)) * IMPACT_TO_SCORE),
+    };
+  })
+    .filter(option => option.remainingPoints > 0.000001)
+    .sort((a, b) => b.remainingPoints - a.remainingPoints || a.name.localeCompare(b.name))
+    .slice(0, count);
+};
+
 export const encodeLevelsToUrl = (levels: number[]): string => safeLevels(levels).join('');
 export const validEncodedLevels = (encoded: string): boolean =>
   new RegExp('^[1-4]{' + levers.length + '}$').test(encoded);

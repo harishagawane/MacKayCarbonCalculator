@@ -41,16 +41,16 @@ export const FeasibilityWarnings = ({ levels, totalReduction }: FeasibilityWarni
       result.push({ type: 'info', message: 'Both forestry and bioenergy at high levels — be mindful of land-use competition.' });
     }
 
-    // Net zero achieved (uses actual emissions reduction)
+    // Educational score, not verified physical emissions reduction.
     if (totalReduction >= 100) {
-      result.push({ type: 'success', message: 'This selection reaches the illustrative score maximum; it does not prove real-world net zero.' });
+      result.push({ type: 'info', message: 'The illustrative score is at its maximum; this does not prove real-world net zero.' });
     } else if (totalReduction >= 80) {
-      result.push({ type: 'success', message: `This pathway reaches ${Math.round(totalReduction)}% of the illustrative policy index, not a verified emissions reduction.` });
+      result.push({ type: 'info', message: `This pathway reaches ${Math.round(totalReduction)}% of the illustrative policy index, not a verified emissions reduction.` });
     }
 
     // Low effort warning
     if (totalReduction <= 20) {
-      result.push({ type: 'warning', message: 'Very low ambition — emissions will remain high. The UK is legally committed to Net Zero by 2050.' });
+      result.push({ type: 'warning', message: 'Low illustrative policy score. The UK has a legally binding Net Zero 2050 target.' });
     }
 
     // Carbon budget alignment

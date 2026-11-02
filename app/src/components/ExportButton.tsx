@@ -11,10 +11,12 @@ interface ExportButtonProps {
 export const ExportButton = ({ targetRef, filename = 'my2050-scenario.png' }: ExportButtonProps) => {
   const [exporting, setExporting] = useState(false);
   const [done, setDone] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   const handleExport = useCallback(async () => {
     if (!targetRef.current || exporting) return;
     setExporting(true);
+    setFailed(false);
     try {
       const dataUrl = await toPng(targetRef.current, {
         quality: 0.95,
@@ -29,12 +31,14 @@ export const ExportButton = ({ targetRef, filename = 'my2050-scenario.png' }: Ex
       setTimeout(() => setDone(false), 2000);
     } catch (err) {
       console.error('Export failed:', err);
+      setFailed(true);
     } finally {
       setExporting(false);
     }
   }, [targetRef, filename, exporting]);
 
   return (
+    <div className="flex flex-col items-start gap-1">
     <motion.button
       onClick={handleExport}
       disabled={exporting}
@@ -55,5 +59,7 @@ export const ExportButton = ({ targetRef, filename = 'my2050-scenario.png' }: Ex
       </motion.div>
       {exporting ? 'Exporting...' : done ? 'Exported!' : 'Export Image'}
     </motion.button>
+    {failed && <span role="alert" className="text-xs text-red-700 dark:text-red-300">Image export failed. Try CSV or JSON.</span>}
+    </div>
   );
 };

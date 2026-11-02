@@ -14,3 +14,17 @@ test('all existing policy interactions and responsive camera remain',()=>{
 test('cloud animation avoids costly moving blur filter',()=>{
   assert.ok(!scene.includes('opacity="0.78" filter="url(#cloudDiffusion)"'));
 });
+
+test('new railway foreground uses two independently visible services', () => {
+  const railway = fs.readFileSync(path.join(__dirname,'../src/components/RailwayScene.tsx'),'utf8');
+  assert.ok(scene.includes('<RailwayScene heavyVehiclesLevel={heavyVehiclesLevel}'));
+  assert.ok(railway.includes('Two-track railway with passenger and freight trains'));
+  assert.ok(railway.includes('initial={false}'));
+  assert.ok(!railway.includes('opacity: [0, 1, 1, 0]'));
+});
+test('train livery and cargo track policy levers', () => {
+  const railway = fs.readFileSync(path.join(__dirname,'../src/components/RailwayScene.tsx'),'utf8');
+  for (const marker of ['heavyVehiclesLevel >= 2', 'heavyVehiclesLevel >= 4', "FreightCargoId", 'kind={freightCargo}', 'RailwayScene']) {
+    assert.ok(railway.includes(marker), marker);
+  }
+});

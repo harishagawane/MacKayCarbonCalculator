@@ -116,3 +116,25 @@ All 15 policy inputs remain wired to the original animated scene; the
 existing full-screen/dock framing and reduced-motion support remain.
 Visual realism is artistic, **not** an energy-generation or emissions model.
 A full production build and visual/browser acceptance are still required.
+
+## Visible, upgraded railway foreground (November 2026)
+
+The railway is now an isolated `RailwayScene` component. The original
+tiny/fading train SVG blocks were replaced with two independent always-visible
+services on distinct rear/passenger and foreground/freight tracks. The rolling
+stock is larger and more detailed (windows, bodywork, underframe, headlights,
+bogies, wheelsets, pantographs where appropriate), with gentle shunting-style
+motion instead of repeatedly fading out.
+
+Two rail lines have clearer steel railheads, closely spaced timber sleepers,
+textured ballast, signals and a crossing barrier. The Heavy Vehicles lever
+retains diesel/electric/hydrogen visual logic; freight load selection still
+follows the existing cross-sector cargo policy. The SVG remains lightweight,
+runs inside the original reduced-motion MotionConfig and does not alter the
+educational calculation formula.
+
+Acceptance checks: the trains remain visible on initial display and as the
+animation loops, the dock-open camera shows the full railway, Heavy Vehicles
+levels 1-4 change rolling stock, other cargo levers update the freight,
+all 15 levers continue to respond, and reduced-motion mode shows still trains.
+Live browser acceptance is not yet independently verified.

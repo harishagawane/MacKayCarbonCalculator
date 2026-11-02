@@ -66,6 +66,9 @@ export const ControlPanel = ({
   return (
     <div className="border-t-4 border-[#99A3A4] bg-[#D5D8DC]/95 shadow-lg backdrop-blur-sm dark:border-slate-700 dark:bg-slate-950/95">
       {/* Lever controls - horizontally scrollable on mobile */}
+      <p className="px-3 pt-2 text-center text-[11px] font-medium text-slate-700 dark:text-slate-300 md:hidden">
+        Swipe sideways to explore all 15 policy levers · Use arrow keys on a focused slider
+      </p>
       <div className="scene-controls-scroll overflow-x-auto scrollbar-thin">
         <div className="flex justify-center items-end px-2 py-2 sm:px-4 sm:py-4 gap-1 min-w-max md:min-w-0">
           {categories.map((cat, catIndex) => (

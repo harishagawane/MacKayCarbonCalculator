@@ -75,6 +75,16 @@ test('category model scores reconcile with the headline for 256 scenarios', () =
   }
 });
 
+test('invalid energy inputs never create NaN indicators', () => {
+  const malformed = [NaN, ...base.slice(1)];
+  const rows = model.getEnergyChartData(malformed);
+  assert.equal(rows.length, 7);
+  for (const row of rows) {
+    assert.ok(Number.isFinite(row.value2015), row.category);
+    assert.ok(Number.isFinite(row.value2050), row.category);
+  }
+});
+
 test('score opportunities are sorted, deterministic, and empty at maximum effort', () => {
   const suggestions = model.getTopRemainingLevers(base);
   assert.equal(suggestions.length, 3);

@@ -172,7 +172,8 @@ export const getEmissionsChartData = (levels: number[]) => {
 
 export const getEnergyChartData = (levels: number[]) => {
   const base2015 = { transport: 649, buildings: 701, industry: 332, fossilFuels: 1978, bioenergy: 143, nuclear: 180, renewables: 53 };
-  const scenario = calculateEmissions(levels);
+  const selected = safeLevels(levels);
+  const scenario = calculateEmissions(selected);
   const rf = 1 - (scenario.totalReduction / 100);
 
   return [
@@ -181,7 +182,7 @@ export const getEnergyChartData = (levels: number[]) => {
     { category: 'Industry & Agriculture', value2015: base2015.industry, value2050: Math.round(base2015.industry * (0.85 + rf * 0.15)) },
     { category: 'Fossil Fuels', value2015: base2015.fossilFuels, value2050: Math.round(base2015.fossilFuels * rf) },
     { category: 'Bioenergy', value2015: base2015.bioenergy, value2050: Math.round(base2015.bioenergy * (1 + (1 - rf) * 0.5)) },
-    { category: 'Nuclear', value2015: base2015.nuclear, value2050: Math.round(base2015.nuclear * (1 + (levels[9] - 1) * 0.5)) },
+    { category: 'Nuclear', value2015: base2015.nuclear, value2050: Math.round(base2015.nuclear * (1 + (selected[9] - 1) * 0.5)) },
     { category: 'Renewables', value2015: base2015.renewables, value2050: Math.round(base2015.renewables * (1 + (1 - rf) * 10)) },
   ];
 };

@@ -104,7 +104,7 @@ export const ResultsPage = ({ levels, onBack, getShareUrl, comparisonLevels }: R
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <ExportButton targetRef={resultsRef} />
               <ScenarioDataExport levels={levels} comparisonLevels={comparisonLevels} />
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

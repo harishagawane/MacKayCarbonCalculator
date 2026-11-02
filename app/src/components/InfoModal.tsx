@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect } from 'react';
 import { X } from 'lucide-react';
 
 interface InfoModalProps {
@@ -7,6 +8,15 @@ interface InfoModalProps {
 }
 
 export const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isOpen, onClose]);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -48,7 +58,7 @@ export const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
               <div className="flex items-center justify-between p-4 border-b bg-gray-50 dark:bg-gray-800/80 dark:border-gray-700">
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 bg-[#1A5276] rounded-full flex items-center justify-center">
-                    <span className="text-white text-[10px] font-bold">UK</span>
+                    <span className="text-white text-[9px] font-bold">EDU</span>
                   </div>
                   <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
                     Independent educational UK pathway explorer

@@ -264,3 +264,10 @@
 @media (prefers-reduced-motion: reduce) {
   .immersive-scene svg { filter: none; }
 }
+
+/* Fade the edge of the shortened animated canvas into the full-page terrain.
+   This avoids the sharp horizontal cutoff visible above the open controls. */
+.immersive-scene--docked {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 40px), transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 40px), transparent 100%);
+}

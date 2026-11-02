@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from 'react';
 import { MotionConfig, motion, useReducedMotion } from 'framer-motion';
 import { getFreightCargoInfo } from '@/data/calculations';
 
@@ -9,6 +10,41 @@ interface IsometricBackgroundProps {
 
 export const IsometricBackground = ({ levels, foregroundFocus = false }: IsometricBackgroundProps) => {
   const reduceMotion = useReducedMotion();
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [canvasRatio, setCanvasRatio] = useState(1200 / 700);
+
+  // Adapt the SVG camera to the REAL visible scene dimensions. When the
+  // control dock opens, the landscape becomes wider (rather than zooming
+  // to its bottom edge and cutting off the sky, sun and turbine blades).
+  useLayoutEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+
+    const measure = () => {
+      const box = svg.getBoundingClientRect();
+      if (box.width > 0 && box.height > 0) {
+        const next = box.width / box.height;
+        setCanvasRatio(prev => Math.abs(prev - next) > 0.005 ? next : prev);
+      }
+    };
+
+    measure();
+    const observer = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(measure)
+      : null;
+    observer?.observe(svg);
+    window.addEventListener('resize', measure);
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, []);
+
+  // Preserve all 700 vertical world units, including the turbine tops and
+  // railway. Expand only horizontally on wide screens. This is deliberately
+  // independent of the animation transforms used by the scene objects.
+  const cameraWidth = Math.max(1200, Math.ceil(canvasRatio * 700));
+  const cameraLeft = (1200 - cameraWidth) / 2;
   const animationRepeat = reduceMotion ? 0 : Infinity;
   const windLevel = levels[10];
   const solarLevel = levels[11];
@@ -111,17 +147,18 @@ export const IsometricBackground = ({ levels, foregroundFocus = false }: Isometr
   return (
     <MotionConfig reducedMotion={reduceMotion ? 'always' : 'never'}>
       <div
-        className="immersive-scene absolute inset-0 overflow-hidden transition-[filter] duration-700 dark:brightness-[0.68] dark:saturate-[0.85]"
+        className={`immersive-scene ${foregroundFocus ? 'immersive-scene--docked' : ''} absolute inset-0 overflow-hidden transition-[filter] duration-700 dark:brightness-[0.68] dark:saturate-[0.85]`}
         style={{
           // Keep the panoramic viewport filled at every aspect ratio.
           background: 'linear-gradient(180deg,#6b9ec3 0%,#b6d9dd 55%,#8bbd9b 66%,#4a976a 100%)',
         }}
       >
         <svg
-          viewBox="0 0 1200 700"
+          ref={svgRef}
+          viewBox={`${cameraLeft} 0 ${cameraWidth} 700`}
           className="h-full w-full"
           data-scene-motion="true"
-          preserveAspectRatio={foregroundFocus ? 'xMidYMax slice' : 'xMidYMid slice'}
+          preserveAspectRatio="xMidYMid meet"
         >
         <defs>
           {/* Sky gradient */}
@@ -173,7 +210,7 @@ export const IsometricBackground = ({ levels, foregroundFocus = false }: Isometr
         </defs>
         
         {/* Sky */}
-        <rect width="1200" height="700" fill="url(#skyGradient)" />
+        <rect x="-2200" y="0" width="5600" height="700" fill="url(#skyGradient)" />
         
         {/* Soft high-altitude haze that adds depth behind all moving objects */}
         <circle cx="95" cy="68" r="180" fill="url(#softSunHalo)" opacity="0.8" />
@@ -317,10 +354,10 @@ export const IsometricBackground = ({ levels, foregroundFocus = false }: Isometr
         </g>
         
         {/* Distant misty hills and atmospheric perspective */}
-        <path d="M0 345 Q100 310 190 336 Q340 273 495 332 Q635 290 760 330 Q910 270 1070 321 Q1155 298 1200 320 V700 H0 Z" fill="url(#mountainHaze)" opacity="0.65" />
-        <path d="M0 375 Q185 334 295 351 Q460 320 610 357 Q800 304 950 350 Q1080 325 1200 350 V700 H0 Z" fill="#96C4A0" opacity="0.65" />
+        <path d="M-2200 340 Q-1600 300 -1200 335 Q-850 298 -460 335 Q-180 310 0 345 Q100 310 190 336 Q340 273 495 332 Q635 290 760 330 Q910 270 1070 321 Q1155 298 1200 320 Q1600 307 2000 345 Q2600 320 3400 345 V700 H-2200 Z" fill="url(#mountainHaze)" opacity="0.65" />
+        <path d="M-2200 380 Q-1620 333 -1120 365 Q-700 324 -320 370 Q-110 352 0 375 Q185 334 295 351 Q460 320 610 357 Q800 304 950 350 Q1080 325 1200 350 Q1720 317 2190 374 T3400 360 V700 H-2200 Z" fill="#96C4A0" opacity="0.65" />
         {/* Background hills */}
-        <path d="M0 380 Q250 300 500 360 T1000 340 V700 H0 Z" fill="#82C999" />
+        <path d="M-2200 385 Q-1550 320 -950 383 Q-500 321 0 380 Q250 300 500 360 T1000 340 Q1510 335 2050 374 T3400 385 V700 H-2200 Z" fill="#82C999" />
         
         {/* Wind turbines - white 3-blade design */}
         {windTurbines >= 1 && (
@@ -362,8 +399,24 @@ export const IsometricBackground = ({ levels, foregroundFocus = false }: Isometr
         )}
         
         {/* Main landscape */}
-        <path d="M0 420 Q350 360 700 390 T1200 370 V700 H0 Z" fill="url(#grassGradient)" />
+        <path d="M-2200 430 Q-1670 377 -1100 412 Q-500 368 0 420 Q350 360 700 390 T1200 370 Q1710 382 2180 403 T3400 423 V700 H-2200 Z" fill="url(#grassGradient)" />
         
+        {/* Distant tree clusters help the expanded sides read as one landscape. */}
+        <g opacity="0.58" aria-hidden="true">
+          {[-1500, -1120, -760, -460, -260, 1370, 1680, 2030, 2450].map((x, i) => (
+            <g key={x} transform={`translate(${x} ${418 + (i % 3) * 12})`}>
+              <ellipse cx="0" cy="13" rx="34" ry="8" fill="#447a65" opacity="0.22" />
+              {[0, 1, 2].map(j => (
+                <g key={j} transform={`translate(${j * 24 - 22} ${j % 2 ? 6 : 0})`}>
+                  <path d="M-3 12 V-17 H3 V12 Z" fill="#647867" />
+                  <path d="M-16 -11 L0 -48 L16 -11 Z" fill="#579774" />
+                  <path d="M-13 -29 L0 -58 L13 -29 Z" fill="#6cae83" />
+                </g>
+              ))}
+            </g>
+          ))}
+        </g>
+
         {/* River */}
         <path d="M550 400 Q650 430 750 410 Q850 390 950 420 L1050 700 H900 L800 480 Q750 460 700 480 Q650 500 600 480 Z" fill="url(#waterGradient)" />
         

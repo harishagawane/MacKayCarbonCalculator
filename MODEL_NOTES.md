@@ -88,3 +88,19 @@ Verify visually at desktop, laptop, mobile portrait, landscape and browser
 zoom with the dock open and closed. No CSS transform is applied directly to
 the animated SVG objects, so Framer Motion animations retain their intended
 coordinate space.
+
+## Adaptive panoramic camera correction
+
+The previous bottom-aligned `slice` view cropped the sky and turbine blades
+when the lever dock opened. The canvas now measures its rendered aspect ratio
+using `ResizeObserver` and widens the SVG viewBox while keeping the full
+700 world-coordinate height. This retains the complete vertical composition
+at wide aspect ratios without shrinking it into a narrow centre column.
+
+Sky, distant hills and ground layers extend beyond the original 1200-unit
+artwork width for seamless panoramic framing. Decorative distant vegetation
+fills the additional side regions. With the dock open, a gentle 40px
+mask blends the bottom of the animation into the full-viewport background.
+The control dock still reserves its measured height, and closing the dock
+restores the unobstructed scene. No policy calculation or animation behaviour
+was changed by this layout update.

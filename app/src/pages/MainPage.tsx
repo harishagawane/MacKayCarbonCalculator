@@ -103,7 +103,7 @@ export const MainPage = ({
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.25, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="flex shrink-0 gap-1">
+          <div className="grid shrink-0 grid-cols-2 items-center gap-1">
             <motion.button
               onClick={() => setIsInfoModalOpen(true)}
               className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/90 text-slate-700 shadow-sm transition-colors hover:bg-white dark:bg-slate-800/90 dark:text-slate-200 dark:hover:bg-slate-700"
@@ -126,7 +126,7 @@ export const MainPage = ({
             </motion.button>
             <motion.button
               onClick={toggleMuted}
-              className={`flex h-8 w-8 items-center justify-center rounded-lg shadow-sm transition-colors ${
+              className={`col-span-2 mx-auto flex h-8 w-8 items-center justify-center rounded-lg shadow-sm transition-colors ${
                 muted
                   ? 'bg-slate-200/90 text-slate-500 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600'
                   : 'bg-emerald-500 text-white hover:bg-emerald-600'
